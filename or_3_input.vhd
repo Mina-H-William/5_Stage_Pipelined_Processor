@@ -17,7 +17,7 @@ END or_3_input;
 
 ARCHITECTURE Behavioral OF or_3_input IS
 BEGIN
-    PROCESS (input_0, input_1)
+    PROCESS (input_0, input_1, input_2)
     BEGIN
         result <= input_0 OR input_1 OR input_2;
     END PROCESS;

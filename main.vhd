@@ -1,21 +1,17 @@
-library IEEE;
-use IEEE.STD_LOGIC_1164.ALL;
-use IEEE.NUMERIC_STD.ALL;
+LIBRARY IEEE;
+USE IEEE.STD_LOGIC_1164.ALL;
+USE IEEE.NUMERIC_STD.ALL;
 
-entity main is
-    generic (
+ENTITY main IS
+    GENERIC (
 
     );
-    Port (  
-   
+    PORT (
+
     );
-end main;
+END main;
 
-architecture Behavioral of main is
+ARCHITECTURE Behavioral OF main IS
 
-begin
-
-
-end Behavioral;
-
-
+BEGIN
+END Behavioral;

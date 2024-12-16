@@ -1,7 +1,7 @@
 
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
-
+                            --input_(num not needed when call) => (others => '0'),  -- Tie to a constant value
 ENTITY mux_8_input IS
     GENERIC (
         size : INTEGER := 8  -- Size of each input (bit-width)
@@ -16,7 +16,7 @@ ENTITY mux_8_input IS
         input_6  : IN STD_LOGIC_VECTOR (size-1 DOWNTO 0);  -- Seventh input
         input_7  : IN STD_LOGIC_VECTOR (size-1 DOWNTO 0);  -- Eighth input
         sel      : IN STD_LOGIC_VECTOR (2 DOWNTO 0);        -- 3-bit selection signal (000 to 111)
-        output   : OUT STD_LOGIC_VECTOR (size-1 DOWNTO 0)   -- Output
+        result   : OUT STD_LOGIC_VECTOR (size-1 DOWNTO 0)   -- Output
     );
 END mux_8_input;
 
@@ -26,23 +26,23 @@ BEGIN
     BEGIN
         CASE sel IS
             WHEN "000" => 
-                output <= input_0;  -- Select first input
+                result <= input_0;  -- Select first input
             WHEN "001" => 
-                output <= input_1;  -- Select second input
+                result <= input_1;  -- Select second input
             WHEN "010" => 
-                output <= input_2;  -- Select third input
+                result <= input_2;  -- Select third input
             WHEN "011" => 
-                output <= input_3;  -- Select fourth input
+                result <= input_3;  -- Select fourth input
             WHEN "100" => 
-                output <= input_4;  -- Select fifth input
+                result <= input_4;  -- Select fifth input
             WHEN "101" => 
-                output <= input_5;  -- Select sixth input
+                result <= input_5;  -- Select sixth input
             WHEN "110" => 
-                output <= input_6;  -- Select seventh input
+                result <= input_6;  -- Select seventh input
             WHEN "111" => 
-                output <= input_7;  -- Select eighth input
+                result <= input_7;  -- Select eighth input
             WHEN OTHERS => 
-                output <= (others => '0');  -- Default case (should never happen)
+                result <= (others => '0');  -- Default case (should never happen)
         END CASE;
     END PROCESS;
 END behavioral;

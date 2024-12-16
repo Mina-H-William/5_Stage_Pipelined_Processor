@@ -37,8 +37,8 @@ R3
 Z14 DEx4 work 11 bcd_to_7seg 0 22 GIcY=37lS;8eaK`XH1=z83
 l13
 L12
-Z15 V78?UEk?=zbAWTGgiU:gAY3
-Z16 !s100 d<1M;>z9VUzcQ2PNO[;S@2
+V78?UEk?=zbAWTGgiU:gAY3
+!s100 d<1M;>z9VUzcQ2PNO[;S@2
 R7
 32
 R8
@@ -55,8 +55,8 @@ R1
 R2
 R3
 R4
-Z17 8D:/gm3a/sna 3/archticture/Pipeline_Processor/main.vhd
-Z18 FD:/gm3a/sna 3/archticture/Pipeline_Processor/main.vhd
+Z15 8D:/gm3a/sna 3/archticture/Pipeline_Processor/main.vhd
+Z16 FD:/gm3a/sna 3/archticture/Pipeline_Processor/main.vhd
 l0
 L5
 V0;Gie9ENkC>gC7h[4:ZA<2
@@ -66,8 +66,8 @@ R7
 !s110 1734339877
 !i10b 1
 !s108 1734339877.000000
-Z19 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|D:/gm3a/sna 3/archticture/Pipeline_Processor/main.vhd|
-Z20 !s107 D:/gm3a/sna 3/archticture/Pipeline_Processor/main.vhd|
+Z17 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|D:/gm3a/sna 3/archticture/Pipeline_Processor/main.vhd|
+Z18 !s107 D:/gm3a/sna 3/archticture/Pipeline_Processor/main.vhd|
 !i113 1
 R12
 R13
@@ -87,19 +87,19 @@ R7
 !s110 1734339976
 !i10b 1
 !s108 1734339976.000000
-R19
-R20
+R17
+R18
 !i113 1
 R12
 R13
 Emain
-Z21 w1734340159
+Z19 w1734340159
 R1
 R2
 R3
 R4
-R17
-R18
+R15
+R16
 l0
 L5
 VQl3DSiJfFMXYUGRYXzG@U2
@@ -109,8 +109,8 @@ R7
 R8
 !i10b 1
 R9
-R19
-R20
+R17
+R18
 !i113 1
 R12
 R13
@@ -129,8 +129,51 @@ R7
 R8
 !i10b 1
 R9
-R19
-R20
+R17
+R18
+!i113 1
+R12
+R13
+Epipeline_register
+Z20 w1734341799
+Z21 DPx4 ieee 18 std_logic_unsigned 0 22 ;eZjO2D4ZDz<]0>8AL<ne1
+Z22 DPx4 ieee 15 std_logic_arith 0 22 [G314=:2zXJ`VORJe1J@Z1
+R2
+R3
+R4
+Z23 8D:/gm3a/sna 3/archticture/Pipeline_Processor/pipeline_register.vhd
+Z24 FD:/gm3a/sna 3/archticture/Pipeline_Processor/pipeline_register.vhd
+l0
+L6
+VbJ_heKU5P2ERnIg@LV:WS1
+!s100 aVT@`Dn<<:VG[mZ=fmK<X3
+R7
+32
+Z25 !s110 1734341829
+!i10b 1
+Z26 !s108 1734341829.000000
+Z27 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|D:/gm3a/sna 3/archticture/Pipeline_Processor/pipeline_register.vhd|
+Z28 !s107 D:/gm3a/sna 3/archticture/Pipeline_Processor/pipeline_register.vhd|
+!i113 1
+R12
+R13
+Abehavioral
+R21
+R22
+R2
+R3
+DEx4 work 17 pipeline_register 0 22 bJ_heKU5P2ERnIg@LV:WS1
+l20
+L18
+V@4bg;c1f=D1L09m5_>6QL3
+!s100 S4UP023biGm2FB]PH0F;@3
+R7
+32
+R25
+!i10b 1
+R26
+R27
+R28
 !i113 1
 R12
 R13

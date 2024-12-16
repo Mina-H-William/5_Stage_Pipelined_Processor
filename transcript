@@ -1,0 +1,14 @@
+# Error opening D:/gm3a/sna 3/archticture/Pipeline_Processor/main.vhd
+# Path name 'D:/gm3a/sna 3/archticture/Pipeline_Processor/main.vhd' doesn't exist.
+# Compile of main.vhd failed with 1 errors.
+# Compile of generic_mux.vhd failed with 1 errors.
+# Compile of generic_mux.vhd failed with 1 errors.
+# Compile of generic_mux.vhd failed with 2 errors.
+# Compile of generic_mux.vhd failed with 4 errors.
+# Compile of generic_mux.vhd failed with 3 errors.
+# Compile of generic_mux.vhd failed with 1 errors.
+# Compile of generic_mux.vhd failed with 1 errors.
+# Compile of generic_mux.vhd failed with 3 errors.
+# Compile of mux_2_input.vhd was successful.
+# Compile of mux_4_input.vhd was successful.
+# Compile of mux_8_input.vhd was successful.

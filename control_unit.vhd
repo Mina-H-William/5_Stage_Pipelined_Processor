@@ -28,6 +28,7 @@ entity control_unit is
         pass_data_2_signal      : OUT STD_LOGIC;
         pass_data_1_signal      : OUT STD_LOGIC;
         not_signal              : OUT STD_LOGIC;
+        add_ofset_signal        : OUT STD_LOGIC;
         alu_func_signal         : OUT STD_LOGIC;
     );
 end control_unit;
@@ -57,6 +58,7 @@ ARCHITECTURE Behavioral OF control_unit IS
         pass_data_2_signal      <= '0'
         pass_data_1_signal      <= '0'
         not_signal              <= '0'
+        add_offset_signal       <= '0'
         alu_func_signal         <= '0'
     END PROCEDURE reset_signals;
 
@@ -111,13 +113,33 @@ BEGIN
                 is_immediate <= '1';
             WHEN "01101" => -- std
                 mem_write_signal <= '1';
-                alu_func_signal <= '1';
+                add_offset_signal <= '1';
                 is_immediate <= '1';
-            -- WHEN "10000" => -- jz
-            --     mem_write_signal <= '1';
-            --     alu_func_signal <= '1';
-            --     is_immediate <= '1';
-
+            WHEN "10000" => -- jz
+                jz_signal <= '1';
+            WHEN "10001" => -- jn
+                jn_signal <= '1';
+            WHEN "10010" => -- jc
+                jc_signal <= '1';
+            WHEN "10011" => -- jmp
+                jmp_signal <= '1';
+            WHEN "10100" => -- call
+                call_signal <= '1';
+                mem_write_signal <= '1';
+                sp_write_signal <= '1';
+                add_or_subtract_signal <= '1';
+            WHEN "10101" => -- ret
+                ret_or_rti_signal <= '1';
+                mem_read_signal <= '1';
+                sp_write_signal <= '1';
+            WHEN "10110" => -- int
+                int_signal <= '1';
+                mem_write_signal <= '1';
+            WHEN "10111" => -- rti
+                ret_or_rti_signal <= '1';
+                mem_read_signal <= '1';
+                sp_write_signal <= '1'; 
+                rti_signal <= '1';   
             WHEN OTHERS =>
                 reset_signals; -- Default: Do nothing
         END CASE;

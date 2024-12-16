@@ -29,7 +29,7 @@ entity control_unit is
         pass_data_1_signal      : OUT STD_LOGIC;
         not_signal              : OUT STD_LOGIC;
         add_ofset_signal        : OUT STD_LOGIC;
-        alu_func_signal         : OUT STD_LOGIC;
+        alu_func_signal         : OUT STD_LOGIC
     );
 end control_unit;
 

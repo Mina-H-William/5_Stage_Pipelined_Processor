@@ -40,14 +40,11 @@ BEGIN
         );
 
     -- Instantiate the OR module
-    or_instance : ENTITY work.or_2_input
-        GENERIC MAP(
-            size => 1 -- 1-bit inputs
-        )
+    or_instance : ENTITY work.or_2_input_1_bit
         PORT MAP(
-            input_0 => (same_pc_write_disable), -- Convert to a 1-bit vector
-            input_1 => (freeze_signal), -- Convert to a 1-bit vector
-            result => (or_result_signal) -- Convert back to a 1-bit vector
+            input_0 => same_pc_write_disable, -- Convert to a 1-bit vector
+            input_1 => freeze_signal, -- Convert to a 1-bit vector
+            result => or_result_signal -- Convert back to a 1-bit vector
         );
 
     PROCESS (input_demux_signal, same_pc_write_disable, freeze_signal)

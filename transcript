@@ -1,73 +1,15 @@
-# Compile of adder_with_one.vhd failed with 4 errors.
-# Compile of and_2_input.vhd was successful.
-# Compile of fetch.vhd failed with 1 errors.
-# Compile of main.vhd failed with 1 errors.
-# Compile of mux_2_input.vhd was successful.
-# Compile of mux_4_input.vhd was successful.
-# Compile of mux_8_input.vhd was successful.
-# Compile of or_2_input.vhd was successful.
-# Compile of or_3_input.vhd was successful.
-# Compile of pipeline_register.vhd was successful.
-# 10 compiles, 3 failed with 6 errors.
-# Compile of adder_with_one.vhd failed with 4 errors.
-# Compile of adder_with_one.vhd failed with 4 errors.
-# Compile of adder_with_one.vhd failed with 4 errors.
-# Compile of adder_with_one.vhd failed with 4 errors.
-# Compile of adder_with_one.vhd failed with 4 errors.
+# Compile of demux_unit.vhd failed with 4 errors.
+# Compile of demux_unit.vhd was successful.
 # Compile of adder_with_one.vhd was successful.
-vsim -gui work.add_one
-# vsim -gui work.add_one 
-# Start time: 11:04:21 on Dec 16,2024
-# Loading std.standard
-# Loading std.textio(body)
-# Loading ieee.std_logic_1164(body)
-# Loading ieee.numeric_std(body)
-# Loading work.add_one(behavioral)
-add wave -position end  sim:/add_one/width
-add wave -position end  sim:/add_one/output
-add wave -position end  sim:/add_one/input
-force -freeze sim:/add_one/input 8'b01000000 0
-run
-force -freeze sim:/add_one/input 00000001 0
-run
-quit -sim
-# End time: 11:05:32 on Dec 16,2024, Elapsed time: 0:01:11
-# Errors: 0, Warnings: 0
-# Compile of adder_with_one.vhd was successful.
-# Compile of and_2_input.vhd was successful.
-# Compile of fetch.vhd failed with 1 errors.
-# Compile of main.vhd failed with 1 errors.
-# Compile of mux_2_input.vhd was successful.
-# Compile of mux_4_input.vhd was successful.
-# Compile of mux_8_input.vhd was successful.
-# Compile of or_2_input.vhd was successful.
-# Compile of or_3_input.vhd was successful.
-# Compile of pipeline_register.vhd was successful.
-# 10 compiles, 2 failed with 2 errors.
-# Compile of adder_with_one.vhd was successful.
-# Compile of and_2_input.vhd was successful.
-# Compile of fetch.vhd failed with 3 errors.
-# Compile of main.vhd failed with 1 errors.
-# Compile of mux_2_input.vhd was successful.
-# Compile of mux_4_input.vhd was successful.
-# Compile of mux_8_input.vhd was successful.
-# Compile of or_2_input.vhd was successful.
-# Compile of or_3_input.vhd was successful.
-# Compile of pipeline_register.vhd was successful.
-# Compile of demux_unit.vhd failed with 3 errors.
-# Compile of memory_entity.vhd was successful.
-# Compile of or_2_input_1_bit.vhd was successful.
 # Compile of pc_unit.vhd failed with 1 errors.
-# 14 compiles, 4 failed with 8 errors.
-# Compile of main.vhd failed with 1 errors.
+# Compile of pc_unit.vhd failed with 3 errors.
+# Compile of pc_unit.vhd failed with 3 errors.
+# Compile of pc_unit.vhd failed with 3 errors.
+# Compile of pc_unit.vhd was successful.
+# Compile of fetch.vhd failed with 4 errors.
 # Compile of fetch.vhd failed with 3 errors.
-# Compile of fetch.vhd failed with 3 errors.
-# Compile of fetch.vhd failed with 10 errors.
-# Compile of demux_unit.vhd failed with 3 errors.
-# Compile of demux_unit.vhd failed with 3 errors.
-# Compile of demux_unit.vhd failed with 3 errors.
-# Compile of demux_unit.vhd failed with 4 errors.
-# Compile of demux_unit.vhd failed with 4 errors.
-# Compile of demux_unit.vhd failed with 6 errors.
-# Compile of demux_unit.vhd failed with 4 errors.
-# Compile of demux_unit.vhd failed with 4 errors.
+# Compile of fetch.vhd failed with 2 errors.
+# Compile of fetch.vhd failed with 2 errors.
+# Compile of memory_entity.vhd was successful.
+# Compile of fetch.vhd was successful.
+# Compile of fetch.vhd was successful.

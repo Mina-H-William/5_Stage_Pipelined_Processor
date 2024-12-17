@@ -11,14 +11,14 @@ ENTITY pc_unit IS
         empty_stack : IN STD_LOGIC;
         reset : IN STD_LOGIC;
         index_bit : IN STD_LOGIC;
-        result_of_pc_unit : OUT STD_LOGIC_VECTOR (2 DOWNTO 0);
+        result_of_pc_unit : OUT STD_LOGIC_VECTOR (2 DOWNTO 0)
     );
 END pc_unit;
 
 ARCHITECTURE Behavioral OF pc_unit IS
 
     -- Signal to hold the result of OR operation
-    SIGNAL or_result : STD_LOGIC_VECTOR (0 DOWNTO 0); -- 1-bit vector for OR output
+    SIGNAL or_result : STD_LOGIC; -- 1-bit vector for OR output
 
     -- COMPONENT or_2_input
     --     GENERIC (
@@ -34,10 +34,7 @@ ARCHITECTURE Behavioral OF pc_unit IS
 BEGIN
 
     -- Instantiate the OR module
-    or_instance : ENTITY work.or_2_input
-        GENERIC MAP(
-            size => 1 -- 1-bit inputs
-        )
+    or_instance : ENTITY work.or_2_input_1_bit
         PORT MAP(
             input_0 => same_pc_write_disable, -- Connect the first input
             input_1 => freeze_signal, -- Connect the second input
@@ -61,7 +58,7 @@ BEGIN
         ELSIF int_signal = '1' AND index_bit = '1' THEN
             result_of_pc_unit <= "110";
             -- handle freeze is the last priority 
-        ELSIF or_result(0) = '1' THEN
+        ELSIF or_result = '1' THEN
             result_of_pc_unit <= "001";
         ELSE
             result_of_pc_unit <= "000"; -- default is the next instruction 

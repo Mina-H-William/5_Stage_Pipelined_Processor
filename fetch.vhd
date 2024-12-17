@@ -7,7 +7,6 @@ ENTITY fetch IS
         call_or_jump_signal : IN STD_LOGIC;
         conditional_jumps : IN STD_LOGIC;
         ret_or_rti_signal : IN STD_LOGIC;
-        r_src1_from_decode : IN STD_LOGIC_VECTOR (15 DOWNTO 0);
         r_src1_from_excute : IN STD_LOGIC_VECTOR (15 DOWNTO 0);
         mem_out : IN STD_LOGIC_VECTOR (15 DOWNTO 0);
         same_pc_write_disable : IN STD_LOGIC;
@@ -18,6 +17,7 @@ ENTITY fetch IS
         reset : IN STD_LOGIC;
         index_bit : IN STD_LOGIC;
         memory_clk : IN STD_LOGIC;
+        clk : IN STD_LOGIC;
         memory_reset : IN STD_LOGIC;
         freeze_instruction : IN STD_LOGIC_VECTOR(15 DOWNTO 0);
         is_immediate : IN STD_LOGIC;
@@ -156,7 +156,7 @@ BEGIN
             address => pc_read_data_signal, -- Connect address (PC)
             write_data => write_data_signal, -- Write data (not used in fetch stage) /////from the assembler
             read_data => instruction_memory_read_data_signal, -- Connect output to signal 
-            write_en => write_en_signal -- Disable write in fetch stage  /////from the assembler
+            write_en => write_en_signal, -- Disable write in fetch stage  /////from the assembler
 
             -- Connect internal signals to IM[0] to IM[4] outputs
             im_0 => im_0_internal,

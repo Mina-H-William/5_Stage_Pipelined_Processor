@@ -1,7 +1,6 @@
 LIBRARY IEEE;
 USE IEEE.STD_LOGIC_1164.ALL;
-USE IEEE.NUMERIC_STD.ALL
-USE ieee.std_logic_unsigned.ALL;
+USE IEEE.NUMERIC_STD.ALL;
 --input_(num not needed when call) => (others => '0'),  -- Tie to a constant value
 ENTITY stack_mini_alu IS
     PORT (
@@ -17,9 +16,9 @@ BEGIN
     PROCESS (add_or_subtract_signal, input_1, input_2)
     BEGIN
         IF add_or_subtract_signal = '0' THEN
-            result <= input_1 - input_2;
+            result <= STD_LOGIC_VECTOR(signed(input_1) - signed(input_2));
         ELSE
-            result <= input_1 + input_2;
+            result <= STD_LOGIC_VECTOR(signed(input_1) + signed(input_2));
         END IF;
     END PROCESS;
 END Behavioral;

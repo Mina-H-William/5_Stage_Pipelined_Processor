@@ -4,7 +4,6 @@ USE ieee.std_logic_1164.ALL;
 ENTITY exception_wrapper IS
     PORT (
         clk : IN STD_LOGIC; -- Clock signal
-        write_enable : IN STD_LOGIC; -- Write enable signal for EPC
         reset : IN STD_LOGIC; -- Reset signal (active high)
         stack_pointer_address : IN STD_LOGIC_VECTOR (15 DOWNTO 0); -- Stack pointer address
         memory_address : IN STD_LOGIC_VECTOR (15 DOWNTO 0); -- Memory address to write
@@ -39,7 +38,6 @@ BEGIN
         PORT MAP(
             clk => clk,
             reset => reset,
-            write_enable => write_enable,
             stack_exception => stack_exc,
             mem_exception => mem_exc,
             pc_from_decode => pc_from_decode,

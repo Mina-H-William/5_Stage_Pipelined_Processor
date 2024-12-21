@@ -81,12 +81,17 @@ ARCHITECTURE Behavioral OF main IS
     -- outputs of load use
     SIGNAL sig_same_pc_write_disable : STD_LOGIC;
 
+    -- outputs of flush detection
+    SIGNAL sig_flush_detection_IF_ID;
+    SIGNAL sig_flush_detection_ID_EX;
+    SIGNAL sig_flush_detection_EX_MEM;
+    SIGNAL sig_flush_detection_MEM_WB;
+
     -- outputs of forward units
     SIGNAL sig_forward1 : STD_LOGIC;
     SIGNAL sig_forward2 : STD_LOGIC;
 
     --flushes
-    SIGNAL sig_flush_IF_ID : STD_LOGIC;
     SIGNAL sig_flush_ID_EX : STD_LOGIC;
     SIGNAL sig_flush_EX_MEM : STD_LOGIC;
     SIGNAL sig_flush_MEM_WB : STD_LOGIC;
@@ -171,13 +176,23 @@ BEGIN
 
     sig_IF_ID_inputs <= sig_pc_from_fetch & sig_instruction_from_IF & sig_immediate_bits_from_IF;
 
+    LOAD_USE_DETECTION_UNIT : ENTITY work.load_use_detection_unit
+        PORT (
+            rt_from_execute => sig_r_dest_from_EX,
+            r_src_1_from_decode => sig_r_src_1_from_ID,
+            r_src_2_from_decode => sig_r_src_2_from_ID,
+            mem_read_from_execute => sig_mem_read_from_EX,
+            reg_write_from_execute => sig_reg_write_from_EX,
+            load_use_out => sig_same_pc_write_disable
+        );
+
     PIPELINE_REGISTER_IF_ID : ENTITY work.pipeline_register
         GENERIC (
             WIDTH => 48 -- Generic parameter for data width
         )
         PORT (
             clk => clk,
-            flush => sig_flush_IF_ID,
+            flush => sig_flush_detection_IF_ID,
             data_in => sig_IF_ID_inputs,
             data_out => sig_IF_ID_outputs
         );
@@ -268,6 +283,8 @@ BEGIN
         & sig_func_from_ID -- 2 bits
 
         & sp_from_ID;-- 16 bits
+
+    sig_flush_ID_EX <= sig_flush_detection_ID_EX OR sig_same_pc_write_disable;
 
     PIPELINE_REGISTER_ID_EX : ENTITY work.pipeline_register
         GENERIC (

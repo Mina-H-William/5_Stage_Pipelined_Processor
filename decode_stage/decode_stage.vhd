@@ -1,7 +1,7 @@
 LIBRARY ieee;
 USE ieee.std_logic_1164.ALL;
 
-ENTITY decode_wrapper IS
+ENTITY decode_stage IS
     PORT (
         opcode : IN STD_LOGIC_VECTOR (4 DOWNTO 0);
         clk : IN STD_LOGIC;
@@ -36,18 +36,11 @@ ENTITY decode_wrapper IS
         add_offset_signal : OUT STD_LOGIC;
         alu_func_signal : OUT STD_LOGIC;
         read_data_1 : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
-        read_data_2 : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
-        sp : OUT STD_LOGIC_VECTOR (15 DOWNTO 0)
+        read_data_2 : OUT STD_LOGIC_VECTOR(15 DOWNTO 0)
     );
-END decode_wrapper;
+END decode_stage;
 
-ARCHITECTURE Behavioral OF decode_wrapper IS
-
-    SIGNAL sig_sp_write : STD_LOGIC;
-    SIGNAL sig_int : STD_LOGIC;
-    SIGNAL sig_rti : STD_LOGIC;
-    SIGNAL sig_int_or_rti : STD_LOGIC;
-    SIGNAL sig_add_or_subtract : STD_LOGIC;
+ARCHITECTURE Behavioral OF decode_stage IS
 
 BEGIN
 
@@ -61,11 +54,11 @@ BEGIN
             mem_to_reg_signal => mem_to_reg_signal,
             mem_read_signal => mem_read_signal,
             mem_write_signal => mem_write_signal,
-            int_signal => sig_int,
+            int_signal => int_signal,
             set_carry_signal => set_carry_signal,
-            rti_signal => sig_rti,
-            sp_write_signal => sig_sp_write,
-            add_or_subtract_signal => sig_add_or_subtract,
+            rti_signal => rti_signal,
+            sp_write_signal => sp_write_signal,
+            add_or_subtract_signal => add_or_subtract_signal,
             freeze_signal => freeze_signal,
             call_signal => call_signal,
             out_signal => out_signal,
@@ -94,28 +87,5 @@ BEGIN
             read_data_1 => read_data_1,
             read_data_2 => read_data_2
         );
-
-    OR_2_INPUT_1_BIT : ENTITY work.or_2_input_1_bit
-        PORT MAP(
-            input_0 => sig_int, -- First input
-            input_1 => sig_rti, -- Second input
-            result => sig_int_or_rti-- Output
-        );
-
-    -- Stack Wrapper
-    STACK_WRAPPER : ENTITY work.stack_wrapper
-        PORT MAP(
-            clk => clk, -- Clock signal
-            sp_write => sig_sp_write, --sp write
-            reset => reset, -- reset signal (active high)
-            add_or_subtract_signal => sig_add_or_subtract,
-            int_or_rti => sig_int_or_rti,
-            data_out => sp
-        );
-
-    sp_write_signal <= sig_sp_write;
-    rti_signal <= sig_rti;
-    int_signal <= sig_int;
-    add_or_subtract_signal <= sig_add_or_subtract;
 
 END Behavioral;

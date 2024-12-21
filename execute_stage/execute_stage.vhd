@@ -6,7 +6,7 @@ USE ieee.std_logic_1164.ALL;
 USE ieee.std_logic_arith.ALL;
 USE ieee.std_logic_unsigned.ALL;
 
-ENTITY excute_stage IS
+ENTITY execute_stage IS
     PORT (
         rst : IN STD_LOGIC; -- Reset signal
         clk : IN STD_LOGIC; -- Clock signal
@@ -45,9 +45,9 @@ ENTITY excute_stage IS
         flags_from_mem : IN STD_LOGIC_VECTOR (2 DOWNTO 0); -- Flags from memory
         flags_out : OUT STD_LOGIC_VECTOR (2 DOWNTO 0) -- Flags out
     );
-END excute_stage;
+END execute_stage;
 
-ARCHITECTURE behavior OF excute_stage IS
+ARCHITECTURE behavior OF execute_stage IS
     --signals for alu cntrl
     SIGNAL alu_control : STD_LOGIC_VECTOR (3 DOWNTO 0); -- Alu control signal
 

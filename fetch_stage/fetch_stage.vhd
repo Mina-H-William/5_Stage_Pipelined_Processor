@@ -2,9 +2,8 @@ LIBRARY IEEE;
 USE IEEE.STD_LOGIC_1164.ALL;
 USE IEEE.NUMERIC_STD.ALL;
 
-ENTITY fetch IS
+ENTITY fetch_stage IS
     PORT (
-        call_or_jump_signal : IN STD_LOGIC;
         conditional_jumps : IN STD_LOGIC;
         ret_or_rti_signal : IN STD_LOGIC;
         r_src1_from_excute : IN STD_LOGIC_VECTOR (15 DOWNTO 0);
@@ -22,13 +21,14 @@ ENTITY fetch IS
         freeze_instruction : IN STD_LOGIC_VECTOR(15 DOWNTO 0);
         is_immediate : IN STD_LOGIC;
 
+        pc_from_fetch : OUT STD_LOGIC_VECTOR (15 DOWNTO 0);
         instruction_bits_output : OUT STD_LOGIC_VECTOR (15 DOWNTO 0);
         immediate_bits_output : OUT STD_LOGIC_VECTOR (15 DOWNTO 0)
 
     );
-END fetch;
+END fetch_stage;
 
-ARCHITECTURE Behavioral OF fetch IS
+ARCHITECTURE Behavioral OF fetch_stage IS
 
     -- Signal to connect to the output of the pc_unit component
     SIGNAL pc_unit_result_signal : STD_LOGIC_VECTOR (2 DOWNTO 0);
@@ -243,5 +243,7 @@ BEGIN
             is_immediate => is_immediate, -- Immediate mode selection signal
             reset => reset
         );
+
+    pc_from_fetch <= pc_read_data_signal;
 
 END Behavioral;

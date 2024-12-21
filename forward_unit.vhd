@@ -10,10 +10,10 @@ USE ieee.std_logic_unsigned.ALL;
 
 ENTITY forward_unit IS
     PORT (
-        rsrc1_execute : IN STD_LOGIC_VECTOR (15 DOWNTO 0); -- Source 1 execute
-        rsrc2_execute : IN STD_LOGIC_VECTOR (15 DOWNTO 0); -- Source 2 execute
-        rdest_mem : IN STD_LOGIC_VECTOR (15 DOWNTO 0); -- Destination memory
-        rdest_wb : IN STD_LOGIC_VECTOR (15 DOWNTO 0); -- Destination write back
+        rsrc1_execute : IN STD_LOGIC_VECTOR (3 DOWNTO 0); -- Source 1 execute
+        rsrc2_execute : IN STD_LOGIC_VECTOR (2 DOWNTO 0); -- Source 2 execute
+        rdest_mem : IN STD_LOGIC_VECTOR (2 DOWNTO 0); -- Destination memory
+        rdest_wb : IN STD_LOGIC_VECTOR (2 DOWNTO 0); -- Destination write back
         reg_write_signal_mem : IN STD_LOGIC; -- Register write signal memory
         reg_write_signal_wb : IN STD_LOGIC; -- Register write signal write back
         forward1_signal : OUT STD_LOGIC_VECTOR (1 DOWNTO 0); -- Forward 1 signal

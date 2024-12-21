@@ -1,0 +1,15 @@
+# Compile of demux_unit.vhd failed with 4 errors.
+# Compile of demux_unit.vhd was successful.
+# Compile of adder_with_one.vhd was successful.
+# Compile of pc_unit.vhd failed with 1 errors.
+# Compile of pc_unit.vhd failed with 3 errors.
+# Compile of pc_unit.vhd failed with 3 errors.
+# Compile of pc_unit.vhd failed with 3 errors.
+# Compile of pc_unit.vhd was successful.
+# Compile of fetch.vhd failed with 4 errors.
+# Compile of fetch.vhd failed with 3 errors.
+# Compile of fetch.vhd failed with 2 errors.
+# Compile of fetch.vhd failed with 2 errors.
+# Compile of memory_entity.vhd was successful.
+# Compile of fetch.vhd was successful.
+# Compile of fetch.vhd was successful.

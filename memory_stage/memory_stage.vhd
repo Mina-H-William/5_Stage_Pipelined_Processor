@@ -4,23 +4,23 @@ USE IEEE.NUMERIC_STD.ALL;
 
 ENTITY memory_stage IS
     PORT (
-        clk                         : IN STD_LOGIC;
-        sp_write_signal             : IN STD_LOGIC;
-        int_signal_from_meomery     : IN STD_LOGIC;
-        int_signal_from_write_back  : IN STD_LOGIC;
-        rti_signal_from_write_back  : IN STD_LOGIC;
-        call_signal                 : IN STD_LOGIC;
-        mem_write_signal            : IN STD_LOGIC;
-        mem_read_signal             : IN STD_LOGIC;
-        pc                          : IN STD_LOGIC_VECTOR(15 DOWNTO 0);
-        alu_output                  : IN STD_LOGIC_VECTOR(15 DOWNTO 0);
-        alu_input_2                 : IN STD_LOGIC_VECTOR(15 DOWNTO 0);
-        flags                       : IN STD_LOGIC_VECTOR(2 DOWNTO 0);
-        sp                          : IN STD_LOGIC_VECTOR(15 DOWNTO 0);
-        sp_write_back               : IN STD_LOGIC_VECTOR(15 DOWNTO 0);
+        clk : IN STD_LOGIC;
+        sp_write_signal : IN STD_LOGIC;
+        int_signal_from_meomery : IN STD_LOGIC;
+        int_signal_from_write_back : IN STD_LOGIC;
+        rti_signal_from_write_back : IN STD_LOGIC;
+        call_signal : IN STD_LOGIC;
+        mem_write_signal : IN STD_LOGIC;
+        mem_read_signal : IN STD_LOGIC;
+        pc : IN STD_LOGIC_VECTOR(15 DOWNTO 0);
+        alu_output : IN STD_LOGIC_VECTOR(15 DOWNTO 0);
+        alu_input_2 : IN STD_LOGIC_VECTOR(15 DOWNTO 0);
+        flags : IN STD_LOGIC_VECTOR(2 DOWNTO 0);
+        sp : IN STD_LOGIC_VECTOR(15 DOWNTO 0);
+        sp_write_back : IN STD_LOGIC_VECTOR(15 DOWNTO 0);
 
-        data_out                    : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
-        memory_address_out          : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
+        data_out : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
+        memory_address_out : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
 
     );
 END ENTITY memory_stage;
@@ -35,8 +35,8 @@ ARCHITECTURE memory_arch OF memory_stage IS
             input_1 : IN STD_LOGIC_VECTOR(size - 1 DOWNTO 0);
             input_2 : IN STD_LOGIC_VECTOR(size - 1 DOWNTO 0);
             input_3 : IN STD_LOGIC_VECTOR(size - 1 DOWNTO 0);
-            sel     : IN STD_LOGIC_VECTOR(1 DOWNTO 0);
-            result  : OUT STD_LOGIC_VECTOR(size - 1 DOWNTO 0)
+            sel : IN STD_LOGIC_VECTOR(1 DOWNTO 0);
+            result : OUT STD_LOGIC_VECTOR(size - 1 DOWNTO 0)
         );
     END COMPONENT;
 
@@ -47,8 +47,8 @@ ARCHITECTURE memory_arch OF memory_stage IS
         PORT (
             input_0 : IN STD_LOGIC_VECTOR(size - 1 DOWNTO 0);
             input_1 : IN STD_LOGIC_VECTOR(size - 1 DOWNTO 0);
-            sel     : IN STD_LOGIC;
-            result  : OUT STD_LOGIC_VECTOR(size - 1 DOWNTO 0)
+            sel : IN STD_LOGIC;
+            result : OUT STD_LOGIC_VECTOR(size - 1 DOWNTO 0)
         );
     END COMPONENT;
 
@@ -58,12 +58,12 @@ ARCHITECTURE memory_arch OF memory_stage IS
             ADDRESS_WIDTH : INTEGER
         );
         PORT (
-            clk     : IN STD_LOGIC;
-            we      : IN STD_LOGIC;
-            re      : IN STD_LOGIC;
+            clk : IN STD_LOGIC;
+            we : IN STD_LOGIC;
+            re : IN STD_LOGIC;
             address : IN STD_LOGIC_VECTOR(ADDRESS_WIDTH - 1 DOWNTO 0);
             data_in : IN STD_LOGIC_VECTOR(DATA_WIDTH - 1 DOWNTO 0);
-            data_out: OUT STD_LOGIC_VECTOR(DATA_WIDTH - 1 DOWNTO 0)
+            data_out : OUT STD_LOGIC_VECTOR(DATA_WIDTH - 1 DOWNTO 0)
         );
     END COMPONENT;
 
@@ -75,17 +75,15 @@ ARCHITECTURE memory_arch OF memory_stage IS
     SIGNAL mux01_input_0 : STD_LOGIC_VECTOR(15 DOWNTO 0);
     SIGNAL mux10_sel : STD_LOGIC_VECTOR(1 DOWNTO 0);
 
-    SIGNAL expanded_flags : STD_LOGIC_VECTOR(15 DOWNTO 0); 
+    SIGNAL expanded_flags : STD_LOGIC_VECTOR(15 DOWNTO 0);
 
     SIGNAL memory_address : STD_LOGIC_VECTOR(15 DOWNTO 0);
     SIGNAL memory_data_in : STD_LOGIC_VECTOR(15 DOWNTO 0);
     SIGNAL memory_we : STD_LOGIC;
     SIGNAL memory_re : STD_LOGIC;
 BEGIN
-
-    
     memory_address_out <= memory_address;
-    
+
     expanded_flags <= (15 DOWNTO 3 => '0') & flags;
     -- Increment and decrement the program counter
     pc_incremented <= STD_LOGIC_VECTOR(unsigned(pc) + 1);

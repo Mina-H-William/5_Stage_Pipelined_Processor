@@ -61,15 +61,11 @@ ARCHITECTURE Behavioral OF main IS
     -- outputs of memory
     SIGNAL ret_or_rti_from_MEM : STD_LOGIC;
     SIGNAL sig_data_forward_from_MEM : STD_LOGIC_VECTOR(15 DOWNTO 0);
-    SIGNAL sig_flags_from_MEM : STD_LOGIC_VECTOR(15 DOWNTO 0);
     SIGNAL sig_memory_address_from_MEM : STD_LOGIC_VECTOR(15 DOWNTO 0);
     SIGNAL sig_memory_out_from_MEM : STD_LOGIC_VECTOR(15 DOWNTO 0);
 
     -- outputs of write back
-    SIGNAL sig_write_enable_from_WB : STD_LOGIC;
-    SIGNAL sig_rti_from_WB : STD_LOGIC;
     SIGNAL sig_write_data_from_WB : STD_LOGIC_VECTOR (15 DOWNTO 0);
-    SIGNAL sig_mem_out_from_WB : STD_LOGIC_VECTOR (15 DOWNTO 0);
 
     -- ouputs of stack wrapper
     SIGNAL sp_from_ID : STD_LOGIC;
@@ -104,6 +100,9 @@ ARCHITECTURE Behavioral OF main IS
 
     --EX_MEM register inputs
     SIGNAL sig_EX_MEM_inputs : STD_LOGIC_VECTOR (78 DOWNTO 0);
+
+    --MEM_WB register inputs
+    SIGNAL sig_MEM_WB_inputs : STD_LOGIC_VECTOR (55 DOWNTO 0);
 
     -- IF_ID register outputs
     SIGNAL sig_IF_ID_outputs : STD_LOGIC_VECTOR (47 DOWNTO 0);
@@ -168,9 +167,16 @@ ARCHITECTURE Behavioral OF main IS
     SIGNAL sig_sp_from_MEM : STD_LOGIC;
 
     -- MEM_WB register outputs
+    SIGNAL sig_MEM_WB_outputs : STD_LOGIC_VECTOR (55 DOWNTO 0);
     SIGNAL sig_ret_or_rti_from_WB : STD_LOGIC;
     SIGNAL sig_reg_write_from_WB : STD_LOGIC;
     SIGNAL sig_r_dest_from_WB : STD_LOGIC_VECTOR (2 DOWNTO 0);
+    SIGNAL sig_int_from_WB : STD_LOGIC;
+    SIGNAL sig_rti_from_WB : STD_LOGIC;
+    SIGNAL sig_sp_from_WB : STD_LOGIC;
+    SIGNAL sig_mem_to_reg_from_WB : STD_LOGIC;
+    SIGNAL sig_memory_out_from_WB : STD_LOGIC;
+    SIGNAL sig_alu_out_from_WB : STD_LOGIC;
     -- intermediate
     SIGNAL sig_int_or_rti_from_ID : STD_LOGIC;
 
@@ -180,7 +186,7 @@ BEGIN
             conditional_jumps => sig_conditional_jumps_from_EX,
             ret_or_rti_signal => sig_ret_or_rti_from_WB,
             r_src1_from_EX => sig_r_src_1_data_from_EX,
-            mem_out => sig_mem_out_from_WB,
+            mem_out => sig_memory_out_from_WB,
             same_pc_write_disable => sig_same_pc_write_disable,
             freeze_signal => sig_freeze_from_ID,
             int_signal => sig_int_from_ID,
@@ -293,7 +299,7 @@ BEGIN
             opcode => sig_instruction_from_ID,
             clk => clk,
             reset => reset,
-            write_enable => sig_write_enable_from_WB,
+            write_enable => sig_reg_write_from_WB,
             read_register_1 => sig_r_src_1_from_ID,
             read_register_2 => sig_r_src_2_from_ID,
             write_register => sig_r_dest_from_WB,
@@ -431,7 +437,7 @@ BEGIN
             -- flags
             set_Carry => sig_set_carry_from_EX, -- Set carry signal
             rti_from_wb_signal => sig_rti_from_WB, -- Return from interrupt signal
-            flags_from_mem => sig_flags_from_MEM(2 DOWNTO 0), -- Flags from memory
+            flags_from_mem => sig_memory_out_from_MEM(2 DOWNTO 0), -- Flags from memory
             flags_out => sig_flags_from_EX-- Flags out
         );
 
@@ -472,14 +478,12 @@ BEGIN
     sig_sp_from_MEM <= sig_EX_MEM_outputs(15 DOWNTO 0);
 
     MEMORY_STAGE : ENTITY work.memory_stage
-        GENERIC (
-            reg_size => 16;
-            memory_address_size => 16)
         PORT (
             clk => clk,
             sp_write_signal => sig_sp_write_from_MEM,
-            int_signal => sig_int_from_MEM,
-            rti_signal => sig_rti_from_MEM,
+            int_signal_from_meomery => sig_int_from_MEM,
+            int_signal_from_write_back => sig_int_from_WB,
+            rti_signal_from_write_back => sig_rti_from_WB,
             call_signal => sig_call_from_MEM,
             mem_write_signal => sig_mem_write_from_MEM,
             mem_read_signal => sig_mem_read_from_MEM,
@@ -488,24 +492,46 @@ BEGIN
             alu_input_2 => sig_read_data_2_from_MEM,
             flags => sig_flags_to_MEM,
             sp => sig_sp_from_MEM,
+            sp_write_back => sig_sp_from_WB,
+
             data_out => sig_memory_out_from_MEM,
-
-            sp_out = >,
-            alu_output_out = >,
-            memory_address_out = >,
-
-            r_dest_in = >,
-            r_dest_out = >,
-
-            int_signal_out = >,
-            rti_signal_out = >,
-            ret_or_rti_signal_in = >, -- Added as input
-            ret_or_rti_signal_out = >, -- Added as output
-            req_write_signal_in = >, -- Added as input
-            req_write_signal_out = >, -- Added as output
-            mem_to_reg_signal_in = >, -- Added as input
-            mem_to_reg_signal_out => -- Added as output
-
+            memory_address_out => sig_memory_address_from_MEM
         );
 
+    sig_MEM_WB_inputs <= sig_ret_or_rti_from_MEM & sig_reg_write_from_MEM & sig_mem_to_reg_from_MEM & sig_rti_from_MEM & sig_int_from_MEM -- 1 bits
+
+        & sig_memory_out_from_MEM & sig_alu_out_from_MEM -- 16 bits
+
+        & sig_r_dest_from_MEM -- 3 bits
+
+        & sig_sp_from_MEM; -- 16 bits
+
+    PIPELINE_REGISTER_MEM_WB : ENTITY work.pipeline_register
+        GENERIC (
+            WIDTH => 56 -- Generic parameter for data width
+        )
+        PORT (
+            clk => clk,
+            flush => sig_flush_detection_MEM_WB,
+            data_in => sig_MEM_WB_inputs,
+            data_out => sig_MEM_WB_outputs
+        );
+
+    sig_ret_or_rti_from_WB <= sig_EX_MEM_outputs(55);
+    sig_reg_write_from_WB <= sig_EX_MEM_outputs(54);
+    sig_mem_to_reg_from_WB <= sig_EX_MEM_outputs(53);
+    sig_rti_from_WB <= sig_EX_MEM_outputs(52);
+    sig_int_from_WB <= sig_EX_MEM_outputs(51);
+    sig_memory_out_from_WB <= sig_EX_MEM_outputs(50 DOWNTO 35);
+    sig_alu_out_from_WB <= sig_EX_MEM_outputs(34 DOWNTO 19);
+    sig_r_dest_from_WB <= sig_EX_MEM_outputs(18 DOWNTO 16);
+    sig_sp_from_WB <= sig_EX_MEM_outputs(15 DOWNTO 0);
+
+    WRITE_BACK_STAGE : ENTITY work.write_back_stage
+        PORT (
+            mem_to_reg_signal => sig_mem_to_reg_from_WB,
+            mem_out => sig_memory_out_from_WB,
+            data2 => sig_alu_out_from_WB,
+            writeback_stage_out => sig_write_data_from_WB
+        );
 END Behavioral;

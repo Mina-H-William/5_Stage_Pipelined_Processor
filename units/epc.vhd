@@ -6,7 +6,6 @@ USE ieee.std_logic_unsigned.ALL;
 ENTITY epc IS
     PORT (
         clk : IN STD_LOGIC; -- Clock signal
-        write_enable : IN STD_LOGIC; --sp write
         reset : IN STD_LOGIC; -- reset signal (active high)
         stack_exception : IN STD_LOGIC;
         mem_exception : IN STD_LOGIC;
@@ -25,12 +24,10 @@ BEGIN
             register_value <= X"0FFF";
         ELSIF rising_edge(clk) THEN
             -- Update the register value on the clock edge if enabled
-            IF write_enable = '1' THEN
-                IF stack_exception = '1' THEN
-                    register_value <= pc_from_decode;
-                ELSIF mem_exception = '1' THEN
-                    register_value <= pc_from_mem;
-                END IF;
+            IF stack_exception = '1' THEN
+                register_value <= pc_from_decode;
+            ELSIF mem_exception = '1' THEN
+                register_value <= pc_from_mem;
             END IF;
         END IF;
 

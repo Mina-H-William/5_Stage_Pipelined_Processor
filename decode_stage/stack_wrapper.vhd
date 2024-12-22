@@ -5,6 +5,10 @@ ENTITY stack_wrapper IS
     PORT (
         clk : IN STD_LOGIC; -- Clock signal
         sp_write : IN STD_LOGIC; --sp write
+        conditional_jumps : IN STD_LOGIC;
+        ret_or_rti_from_EX : IN STD_LOGIC;
+        ret_or_rti_from_MEM : IN STD_LOGIC;
+        ret_or_rti_from_WB : IN STD_LOGIC;
         reset : IN STD_LOGIC; -- reset signal (active high)
         add_or_subtract_signal : IN STD_LOGIC;
         int_or_rti : IN STD_LOGIC;
@@ -14,6 +18,7 @@ END stack_wrapper;
 
 ARCHITECTURE Behavioral OF stack_wrapper IS
     -- Internal signals for exceptions
+    SIGNAL sig_write_enable : STD_LOGIC;
     SIGNAL sp_out : STD_LOGIC_VECTOR (15 DOWNTO 0);
 
     -- Signal for EPC output
@@ -22,15 +27,17 @@ ARCHITECTURE Behavioral OF stack_wrapper IS
     SIGNAL mini_alu_out : STD_LOGIC_VECTOR (15 DOWNTO 0);
 
 BEGIN
-    -- Instantiate the exception_detection_unit
-    STACK_POINTER : ENTITY work.stack_pointer
-        PORT MAP(
-            clk => clk, -- Clock signal
-            write_enable => sp_write, --sp write
-            reset => reset, -- reset signal (active high)
-            data_in => mini_alu_out, -- Input data
-            data_out => sp_out -- Output data
-        );
+
+    sig_write_enable <= sp_write AND NOT(conditional_jumps OR ret_or_rti_from_EX OR ret_or_rti_from_MEM OR ret_or_rti_from_WB)
+        -- Instantiate the exception_detection_unit
+        STACK_POINTER : ENTITY work.stack_pointer
+            PORT MAP(
+                clk => clk, -- Clock signal
+                write_enable => sig_write_enable, --sp write
+                reset => reset, -- reset signal (active high)
+                data_in => mini_alu_out, -- Input data
+                data_out => sp_out -- Output data
+            );
 
     -- Instantiate the EPC
     FIRST_MUX_2_INPUT : ENTITY work.mux_2_input

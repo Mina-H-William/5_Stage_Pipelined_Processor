@@ -28,16 +28,16 @@ ARCHITECTURE Behavioral OF stack_wrapper IS
 
 BEGIN
 
-    sig_write_enable <= sp_write AND NOT(conditional_jumps OR ret_or_rti_from_EX OR ret_or_rti_from_MEM OR ret_or_rti_from_WB)
-        -- Instantiate the exception_detection_unit
-        STACK_POINTER : ENTITY work.stack_pointer
-            PORT MAP(
-                clk => clk, -- Clock signal
-                write_enable => sig_write_enable, --sp write
-                reset => reset, -- reset signal (active high)
-                data_in => mini_alu_out, -- Input data
-                data_out => sp_out -- Output data
-            );
+    sig_write_enable <= sp_write AND NOT(conditional_jumps OR ret_or_rti_from_EX OR ret_or_rti_from_MEM OR ret_or_rti_from_WB);
+    -- Instantiate the exception_detection_unit
+    STACK_POINTER : ENTITY work.stack_pointer
+        PORT MAP(
+            clk => clk, -- Clock signal
+            write_enable => sig_write_enable, --sp write
+            reset => reset, -- reset signal (active high)
+            data_in => mini_alu_out, -- Input data
+            data_out => sp_out -- Output data
+        );
 
     -- Instantiate the EPC
     FIRST_MUX_2_INPUT : ENTITY work.mux_2_input

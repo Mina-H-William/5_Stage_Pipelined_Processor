@@ -48,8 +48,8 @@ ARCHITECTURE Behavioral OF main IS
     SIGNAL sig_not_from_ID : STD_LOGIC;
     SIGNAL sig_add_offset_from_ID : STD_LOGIC;
     SIGNAL sig_alu_func_from_ID : STD_LOGIC;
-    SIGNAL sig_read_data_1_from_ID : STD_LOGIC;
-    SIGNAL sig_read_data_2_from_ID : STD_LOGIC;
+    SIGNAL sig_read_data_1_from_ID : STD_LOGIC_VECTOR(15 DOWNTO 0);
+    SIGNAL sig_read_data_2_from_ID : STD_LOGIC_VECTOR(15 DOWNTO 0);
 
     -- outputs of execute
     SIGNAL sig_conditional_jumps_from_EX : STD_LOGIC;
@@ -68,7 +68,7 @@ ARCHITECTURE Behavioral OF main IS
     SIGNAL sig_write_data_from_WB : STD_LOGIC_VECTOR (15 DOWNTO 0);
 
     -- ouputs of stack wrapper
-    SIGNAL sp_from_ID : STD_LOGIC;
+    SIGNAL sp_from_ID : STD_LOGIC_VECTOR(15 DOWNTO 0);
 
     -- outputs of exception
     SIGNAL sig_invalid_memory_exception : STD_LOGIC;
@@ -78,14 +78,14 @@ ARCHITECTURE Behavioral OF main IS
     SIGNAL sig_same_pc_write_disable : STD_LOGIC;
 
     -- outputs of flush detection
-    SIGNAL sig_flush_detection_IF_ID;
-    SIGNAL sig_flush_detection_ID_EX;
-    SIGNAL sig_flush_detection_EX_MEM;
-    SIGNAL sig_flush_detection_MEM_WB;
+    SIGNAL sig_flush_detection_IF_ID : STD_LOGIC;
+    SIGNAL sig_flush_detection_ID_EX : STD_LOGIC;
+    SIGNAL sig_flush_detection_EX_MEM : STD_LOGIC;
+    SIGNAL sig_flush_detection_MEM_WB : STD_LOGIC;
 
     -- outputs of forward units
-    SIGNAL sig_forward1 : STD_LOGIC;
-    SIGNAL sig_forward2 : STD_LOGIC;
+    SIGNAL sig_forward1 : STD_LOGIC_VECTOR(1 DOWNTO 0);
+    SIGNAL sig_forward2 : STD_LOGIC_VECTOR(1 DOWNTO 0);
 
     --flushes
     SIGNAL sig_flush_ID_EX : STD_LOGIC;
@@ -131,9 +131,9 @@ ARCHITECTURE Behavioral OF main IS
     SIGNAL sig_in_from_EX : STD_LOGIC;
     SIGNAL sig_is_immediate_from_EX : STD_LOGIC;
     SIGNAL sig_pc_from_EX : STD_LOGIC_VECTOR (15 DOWNTO 0);
-    SIGNAL sig_jz_from_EX : STD_LOGIC_VECTOR (82);
-    SIGNAL sig_jc_from_EX : STD_LOGIC_VECTOR (81);
-    SIGNAL sig_jn_from_EX : STD_LOGIC_VECTOR (80);
+    SIGNAL sig_jz_from_EX : STD_LOGIC;
+    SIGNAL sig_jc_from_EX : STD_LOGIC;
+    SIGNAL sig_jn_from_EX : STD_LOGIC;
     SIGNAL sig_read_data_1_from_EX : STD_LOGIC_VECTOR (15 DOWNTO 0);
     SIGNAL sig_read_data_2_from_EX : STD_LOGIC_VECTOR (15 DOWNTO 0);
     SIGNAL sig_input_port_from_EX : STD_LOGIC_VECTOR (15 DOWNTO 0);
@@ -161,10 +161,10 @@ ARCHITECTURE Behavioral OF main IS
     SIGNAL sig_rti_from_MEM : STD_LOGIC;
     SIGNAL sig_sp_write_from_MEM : STD_LOGIC;
     SIGNAL sig_call_from_MEM : STD_LOGIC;
-    SIGNAL sig_alu_out_from_MEM : STD_LOGIC;
-    SIGNAL sig_read_data_2_from_MEM : STD_LOGIC;
-    SIGNAL sig_flags_to_MEM : STD_LOGIC;
-    SIGNAL sig_sp_from_MEM : STD_LOGIC;
+    SIGNAL sig_alu_out_from_MEM : STD_LOGIC_VECTOR (15 DOWNTO 0);
+    SIGNAL sig_read_data_2_from_MEM : STD_LOGIC_VECTOR (15 DOWNTO 0);
+    SIGNAL sig_flags_to_MEM : STD_LOGIC_VECTOR (2 DOWNTO 0);
+    SIGNAL sig_sp_from_MEM : STD_LOGIC_VECTOR (15 DOWNTO 0);
 
     -- MEM_WB register outputs
     SIGNAL sig_MEM_WB_outputs : STD_LOGIC_VECTOR (55 DOWNTO 0);
@@ -173,10 +173,10 @@ ARCHITECTURE Behavioral OF main IS
     SIGNAL sig_r_dest_from_WB : STD_LOGIC_VECTOR (2 DOWNTO 0);
     SIGNAL sig_int_from_WB : STD_LOGIC;
     SIGNAL sig_rti_from_WB : STD_LOGIC;
-    SIGNAL sig_sp_from_WB : STD_LOGIC;
+    SIGNAL sig_sp_from_WB : STD_LOGIC_VECTOR (15 DOWNTO 0);
     SIGNAL sig_mem_to_reg_from_WB : STD_LOGIC;
-    SIGNAL sig_memory_out_from_WB : STD_LOGIC;
-    SIGNAL sig_alu_out_from_WB : STD_LOGIC;
+    SIGNAL sig_memory_out_from_WB : STD_LOGIC_VECTOR (15 DOWNTO 0);
+    SIGNAL sig_alu_out_from_WB : STD_LOGIC_VECTOR (15 DOWNTO 0);
     -- intermediate
     SIGNAL sig_int_or_rti_from_ID : STD_LOGIC;
 
@@ -185,7 +185,7 @@ BEGIN
         PORT MAP(
             conditional_jumps => sig_conditional_jumps_from_EX,
             ret_or_rti_signal => sig_ret_or_rti_from_WB,
-            r_src1_from_EX => sig_r_src_1_data_from_EX,
+            r_src1_from_excute => sig_r_src_1_data_from_EX,
             mem_out => sig_memory_out_from_WB,
             same_pc_write_disable => sig_same_pc_write_disable,
             freeze_signal => sig_freeze_from_ID,
@@ -193,11 +193,11 @@ BEGIN
             invalid_memory => sig_invalid_memory_exception,
             empty_stack => sig_empty_stack_exception,
             reset => reset,
-            index_bit => sig_instruction(1),
+            index_bit => sig_instruction_from_ID(1),
             memory_clk => memory_clk,
             clk => clk,
             memory_reset => reset,
-            freeze_instruction => sig_instruction,
+            freeze_instruction => sig_instruction_from_ID,
             is_immediate => sig_is_immediate_from_ID,
 
             pc_from_fetch => sig_pc_from_fetch,
@@ -208,7 +208,7 @@ BEGIN
     sig_IF_ID_inputs <= sig_pc_from_fetch & sig_instruction_from_IF & sig_immediate_bits_from_IF;
 
     FORWARD_UNIT : ENTITY work.forward_unit
-        PORT (
+        PORT MAP(
             rsrc1_execute => sig_r_src_1_address_from_EX, -- Source 1 execute
             rsrc2_execute => sig_r_src_2_address_from_EX, -- Source 2 execute
             rdest_mem => sig_r_dest_from_MEM, -- Destination memory
@@ -220,7 +220,7 @@ BEGIN
         );
 
     FLUSH_DETECTION_UNIT : ENTITY work.flush_detection_unit
-        PORT (
+        PORT MAP(
             conditional_jumps_from_EX => sig_conditional_jumps_from_EX,
             ret_or_rti_from_MEM => sig_ret_or_rti_from_MEM,
             ret_or_rti_from_EX => sig_ret_or_rti_from_EX,
@@ -236,7 +236,7 @@ BEGIN
         );
 
     EXCEPTION_WRAPPER : ENTITY work.exception_wrapper
-        PORT (
+        PORT MAP(
             clk => clk, -- Clock signal
             reset => reset, -- Reset signal (active high)
             stack_pointer_address => sp_from_ID, -- Stack pointer address
@@ -249,7 +249,7 @@ BEGIN
         );
 
     LOAD_USE_DETECTION_UNIT : ENTITY work.load_use_detection_unit
-        PORT (
+        PORT MAP(
             rt_from_execute => sig_r_dest_from_EX,
             r_src_1_from_decode => sig_r_src_1_from_ID,
             r_src_2_from_decode => sig_r_src_2_from_ID,
@@ -259,10 +259,10 @@ BEGIN
         );
 
     PIPELINE_REGISTER_IF_ID : ENTITY work.pipeline_register
-        GENERIC (
+        GENERIC MAP(
             WIDTH => 48 -- Generic parameter for data width
         )
-        PORT (
+        PORT MAP(
             clk => clk,
             flush => sig_flush_detection_IF_ID,
             data_in => sig_IF_ID_inputs,
@@ -281,7 +281,7 @@ BEGIN
     sig_int_or_rti_from_ID <= sig_int_from_ID OR sig_rti_from_ID;
 
     STACK_WRAPPER : ENTITY work.stack_wrapper
-        PORT (
+        PORT MAP(
             clk => clk, -- Clock signal
             sp_write => sig_sp_write_from_ID, --sp write
             conditional_jumps => sig_conditional_jumps_from_EX,
@@ -296,7 +296,7 @@ BEGIN
 
     DECODE_STAGE : ENTITY work.decode_stage
         PORT MAP(
-            opcode => sig_instruction_from_ID,
+            opcode => sig_instruction_from_ID(15 DOWNTO 11),
             clk => clk,
             reset => reset,
             write_enable => sig_reg_write_from_WB,
@@ -329,7 +329,7 @@ BEGIN
             add_offset_signal => sig_add_offset_from_ID,
             alu_func_signal => sig_alu_func_from_ID,
             read_data_1 => sig_read_data_1_from_ID,
-            read_data_2 => sig_read_data_2_from_ID,
+            read_data_2 => sig_read_data_2_from_ID
         );
 
     sig_ID_EX_inputs <=
@@ -359,10 +359,10 @@ BEGIN
     sig_flush_ID_EX <= sig_flush_detection_ID_EX OR sig_same_pc_write_disable;
 
     PIPELINE_REGISTER_ID_EX : ENTITY work.pipeline_register
-        GENERIC (
+        GENERIC MAP(
             WIDTH => 113 -- Generic parameter for data width
         )
-        PORT (
+        PORT MAP(
             clk => clk,
             flush => sig_flush_ID_EX,
             data_in => sig_ID_EX_inputs,
@@ -402,7 +402,7 @@ BEGIN
     sig_sp_from_EX <= sig_ID_EX_outputs(15 DOWNTO 0);
 
     EXECUTE_STAGE : ENTITY work.execute_stage
-        PORT (
+        PORT MAP(
             rst => reset, -- Reset signal
             clk => clk, -- Clock signal
             is_immediate => sig_is_immediate_from_EX, -- Immediate signal
@@ -451,10 +451,10 @@ BEGIN
         & sig_sp_from_EX; -- 16 bits
 
     PIPELINE_REGISTER_EX_MEM : ENTITY work.pipeline_register
-        GENERIC (
+        GENERIC MAP(
             WIDTH => 79 -- Generic parameter for data width
         )
-        PORT (
+        PORT MAP(
             clk => clk,
             flush => sig_flush_detection_EX_MEM,
             data_in => sig_EX_MEM_inputs,
@@ -478,7 +478,7 @@ BEGIN
     sig_sp_from_MEM <= sig_EX_MEM_outputs(15 DOWNTO 0);
 
     MEMORY_STAGE : ENTITY work.memory_stage
-        PORT (
+        PORT MAP(
             clk => clk,
             sp_write_signal => sig_sp_write_from_MEM,
             int_signal_from_meomery => sig_int_from_MEM,
@@ -507,10 +507,10 @@ BEGIN
         & sig_sp_from_MEM; -- 16 bits
 
     PIPELINE_REGISTER_MEM_WB : ENTITY work.pipeline_register
-        GENERIC (
+        GENERIC MAP(
             WIDTH => 56 -- Generic parameter for data width
         )
-        PORT (
+        PORT MAP(
             clk => clk,
             flush => sig_flush_detection_MEM_WB,
             data_in => sig_MEM_WB_inputs,
@@ -528,7 +528,7 @@ BEGIN
     sig_sp_from_WB <= sig_EX_MEM_outputs(15 DOWNTO 0);
 
     WRITE_BACK_STAGE : ENTITY work.write_back_stage
-        PORT (
+        PORT MAP(
             mem_to_reg_signal => sig_mem_to_reg_from_WB,
             mem_out => sig_memory_out_from_WB,
             data2 => sig_alu_out_from_WB,

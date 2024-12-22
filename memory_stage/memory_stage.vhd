@@ -20,7 +20,7 @@ ENTITY memory_stage IS
         sp_write_back : IN STD_LOGIC_VECTOR(15 DOWNTO 0);
 
         data_out : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
-        memory_address_out : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
+        memory_address_out : OUT STD_LOGIC_VECTOR(15 DOWNTO 0)
 
     );
 END ENTITY memory_stage;

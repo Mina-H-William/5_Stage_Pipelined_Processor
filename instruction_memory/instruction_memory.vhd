@@ -28,14 +28,14 @@ ARCHITECTURE behavior OF instruction_memory IS
     SIGNAL seed_memory : STD_LOGIC := '1';
 BEGIN
 
-    IM_0 <= inst_memory(65528);
-    IM_1 <= inst_memory(65529);
-    IM_2 <= inst_memory(65530);
-    IM_3 <= inst_memory(65531);
-    IM_4 <= inst_memory(65532);
-    IM_5 <= inst_memory(65533);
-    IM_6 <= inst_memory(65534);
-    IM_7 <= inst_memory(65535);
+    IM_0 <= inst_memory(0);
+    IM_1 <= inst_memory(1);
+    IM_2 <= inst_memory(2);
+    IM_3 <= inst_memory(3);
+    IM_4 <= inst_memory(4);
+    IM_5 <= inst_memory(5);
+    IM_6 <= inst_memory(6);
+    IM_7 <= inst_memory(7);
 
     -- Combinatorial process for instruction fetch
     PROCESS (pc, enable,address, inst_memory, seed_memory)

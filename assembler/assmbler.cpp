@@ -121,6 +121,26 @@ void assembleFile(const string& inputFile, const string& outputFile) {
     string line;
     int instructionCount = 0;
 
+    while(instructionCount <= 8){
+        cout<<"please enter a 16 bit string for the IM["<<instructionCount<<"]:\n";
+        string im ;
+        cin >> im ;
+        if(im.length() != 16 ){
+            throw invalid_argument("the string must conatin 16 digit");
+        }
+        for(auto digit: im){
+            if(digit != '0' && digit != '1'){
+                throw invalid_argument("the string must be binary");
+            }
+        }
+        outfile << im << endl;
+        instructionCount++;
+    }
+
+    while(instructionCount < 20){
+        outfile << nop << endl;
+        instructionCount++;
+    }
     while (getline(infile, line)) {
         if (!line.empty()) {
             try {

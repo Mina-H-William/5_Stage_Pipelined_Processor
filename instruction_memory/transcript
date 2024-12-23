@@ -1,0 +1,91 @@
+# Compile of instruction_memory.vhd was successful.
+# Compile of instruction_memory_tb.vhd was successful.
+# 2 compiles, 0 failed with no errors.
+vsim -gui work.instruction_memory_tb
+# vsim -gui work.instruction_memory_tb 
+# Start time: 04:54:22 on Dec 23,2024
+# Loading std.standard
+# Loading std.textio(body)
+# Loading ieee.std_logic_1164(body)
+# Loading ieee.numeric_std(body)
+# Loading work.instruction_memory_tb(behavior)
+# Loading ieee.std_logic_textio(body)
+# Loading ieee.std_logic_arith(body)
+# Loading ieee.std_logic_unsigned(body)
+# Loading work.instruction_memory(behavior)
+add wave -position end sim:/instruction_memory_tb/*
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+# ** Failure: Error: Instruction at pc=1 mismatch!
+#    Time: 30 ns  Iteration: 0  Process: /instruction_memory_tb/stim_proc File: C:/Users/User/Desktop/arch project/5_Stage_Pipelined_Processor/instruction_memory/instruction_memory_tb.vhd
+# Break in Process stim_proc at C:/Users/User/Desktop/arch project/5_Stage_Pipelined_Processor/instruction_memory/instruction_memory_tb.vhd line 72
+# Compile of instruction_memory.vhd was successful.
+# Compile of instruction_memory_tb.vhd was successful.
+# 2 compiles, 0 failed with no errors.
+restart -f
+# ** Note: (vsim-12125) Error and warning message counts have been reset to '0' because of 'restart'.
+# Loading work.instruction_memory_tb(behavior)
+# Loading work.instruction_memory(behavior)
+run
+# GetModuleFileName: The specified module could not be found.
+# 
+# 
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+# Compile of instruction_memory.vhd was successful.
+# Compile of instruction_memory_tb.vhd was successful.
+# 2 compiles, 0 failed with no errors.
+restart -f
+# ** Note: (vsim-12125) Error and warning message counts have been reset to '0' because of 'restart'.
+# Loading work.instruction_memory_tb(behavior)
+# Loading work.instruction_memory(behavior)
+run
+# GetModuleFileName: The specified module could not be found.
+# 
+# 
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+run
+# End time: 05:25:39 on Dec 23,2024, Elapsed time: 0:31:17
+# Errors: 0, Warnings: 1

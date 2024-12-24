@@ -11,7 +11,7 @@ ENTITY decode_stage IS
         read_register_2 : IN STD_LOGIC_VECTOR(2 DOWNTO 0);
         write_register : IN STD_LOGIC_VECTOR(2 DOWNTO 0);
         write_data : IN STD_LOGIC_VECTOR(15 DOWNTO 0);
-        ret_or_rti_signal : OUT STD_LOGIC;
+        ret_signal : OUT STD_LOGIC;
         reg_write_signal : OUT STD_LOGIC;
         jmp_signal : OUT STD_LOGIC;
         mem_to_reg_signal : OUT STD_LOGIC;
@@ -48,7 +48,7 @@ BEGIN
     CONTROL_UNIT : ENTITY work.control_unit
         PORT MAP(
             opcode => opcode,
-            ret_or_rti_signal => ret_or_rti_signal,
+            ret_signal => ret_signal,
             reg_write_signal => reg_write_signal,
             jmp_signal => jmp_signal,
             mem_to_reg_signal => mem_to_reg_signal,

@@ -24,7 +24,7 @@ BEGIN
     BEGIN
         IF reset = '1' THEN
             reg_file <= (OTHERS => (OTHERS => '0'));
-        ELSIF rising_edge(clk) THEN
+        ELSIF falling_edge(clk) THEN
             IF write_enable = '1' THEN
                 reg_file(to_integer(unsigned(write_register))) <= write_data;
             END IF;

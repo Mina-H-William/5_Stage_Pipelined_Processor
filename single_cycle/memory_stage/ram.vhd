@@ -9,6 +9,7 @@ ENTITY ram IS
     );
     PORT (
         clk : IN STD_LOGIC;
+        reset : IN STD_LOGIC;
         we : IN STD_LOGIC;
         re : IN STD_LOGIC; -- Read enable
         address : IN STD_LOGIC_VECTOR(ADDRESS_WIDTH - 1 DOWNTO 0);
@@ -22,9 +23,11 @@ ARCHITECTURE ram_arch OF ram IS
     SIGNAL ram : ram_type;
     SIGNAL data_out_reg : STD_LOGIC_VECTOR(DATA_WIDTH - 1 DOWNTO 0);
 BEGIN
-    PROCESS (clk)
+    PROCESS (clk, reset)
     BEGIN
-        IF rising_edge(clk) THEN
+        IF reset = '1' THEN
+            ram <= (OTHERS => (OTHERS => '0'));
+        ELSIF rising_edge(clk) THEN
             IF we = '1' THEN
                 ram(to_integer(unsigned(address))) <= data_in;
             END IF;

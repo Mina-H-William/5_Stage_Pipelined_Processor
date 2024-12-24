@@ -5,7 +5,7 @@ USE IEEE.NUMERIC_STD.ALL;
 ENTITY fetch_stage IS
     PORT (
         conditional_jumps : IN STD_LOGIC;
-        ret_or_rti_signal : IN STD_LOGIC;
+        ret_signal : IN STD_LOGIC;
         r_src1_from_excute : IN STD_LOGIC_VECTOR (15 DOWNTO 0);
         mem_out : IN STD_LOGIC_VECTOR (15 DOWNTO 0);
         freeze_signal : IN STD_LOGIC;
@@ -54,6 +54,11 @@ ARCHITECTURE Behavioral OF fetch_stage IS
     SIGNAL pc_input_signal : STD_LOGIC_VECTOR (15 DOWNTO 0);
 
     SIGNAL instruction_with_immediate : STD_LOGIC_VECTOR(15 DOWNTO 0);
+
+    SIGNAL sig_ret_or_rti : STD_LOGIC;
+
+    SIGNAL sig_rti_and_write_flags : STD_LOGIC;
+
     ----------------------------------------------------------------------------------------------------------------------------
 
     ----------------------------------------------------------------------------------------------------------------------------
@@ -100,6 +105,20 @@ BEGIN
             result => first_mux_output_signal
         );
 
+    first_and : ENTITY work.and_2_input_1_bit
+        PORT MAP(
+            input_0 => write_flags_done, -- First input
+            input_1 => rti_signal, -- second input
+            result => sig_rti_and_write_flags
+        );
+
+    first_or : ENTITY work.or_2_input_1_bit
+        PORT MAP(
+            input_0 => sig_rti_and_write_flags, -- First input
+            input_1 => ret_signal, -- second input
+            result => sig_ret_or_rti
+        );
+
     -- Instantiate the second mux_2_input component
     mux_inst_2 : ENTITY work.mux_2_input
         GENERIC MAP(
@@ -108,7 +127,7 @@ BEGIN
         PORT MAP(
             input_0 => first_mux_output_signal,
             input_1 => mem_out,
-            sel => ret_or_rti_signal, -- Selection signal to choose between inputs
+            sel => sig_ret_or_rti, -- Selection signal to choose between inputs
             result => second_mux_output_signal
         );
 

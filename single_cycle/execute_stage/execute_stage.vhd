@@ -11,9 +11,6 @@ ENTITY execute_stage IS
         rst : IN STD_LOGIC; -- Reset signal
         clk : IN STD_LOGIC; -- Clock signal
         is_immediate : IN STD_LOGIC; -- Immediate signal
-        -- signals for forward unit 
-        forward1_signal : IN STD_LOGIC_VECTOR (1 DOWNTO 0); -- Forward 1 signal
-        forward2_signal : IN STD_LOGIC_VECTOR (1 DOWNTO 0); -- Forward 2 signal
         -- signals for jumping
         jz_signal : IN STD_LOGIC; -- Jump zero signal
         jn_signal : IN STD_LOGIC; -- Jump negative signal
@@ -34,14 +31,12 @@ ENTITY execute_stage IS
         -- data
         data1 : IN STD_LOGIC_VECTOR (15 DOWNTO 0); -- Data 1
         data2 : IN STD_LOGIC_VECTOR (15 DOWNTO 0); -- Data 2
-        data_forward_mem : IN STD_LOGIC_VECTOR (15 DOWNTO 0); -- Data forward memory
-        data_forward_wb : IN STD_LOGIC_VECTOR (15 DOWNTO 0); -- Data forward execute
         immediate : IN STD_LOGIC_VECTOR (15 DOWNTO 0); -- Immediate
         rsrc1_from_excute : OUT STD_LOGIC_VECTOR (15 DOWNTO 0); -- Source 1 from execute
         data_out : OUT STD_LOGIC_VECTOR (15 DOWNTO 0); -- Alu out
         -- flags
         set_Carry : IN STD_LOGIC; -- Set carry signal
-        rti_from_wb_signal : IN STD_LOGIC; -- Return from interrupt signal
+        rti_total_signal : IN STD_LOGIC; -- Return from interrupt signal
         flags_from_mem : IN STD_LOGIC_VECTOR (2 DOWNTO 0); -- Flags from memory
         flags_out : OUT STD_LOGIC_VECTOR (2 DOWNTO 0) -- Flags out
     );
@@ -53,8 +48,6 @@ ARCHITECTURE behavior OF execute_stage IS
 
     --signals for forward unit
     SIGNAL data2_before_forward : STD_LOGIC_VECTOR (15 DOWNTO 0); -- Data 2 before forward
-    SIGNAL data1_after_forward : STD_LOGIC_VECTOR (15 DOWNTO 0); -- Data 1 after forward
-    SIGNAL data2_after_forward : STD_LOGIC_VECTOR (15 DOWNTO 0); -- Data 2 after forward
 
     --signals for alu
     SIGNAL alu_out : STD_LOGIC_VECTOR (15 DOWNTO 0); -- Alu out
@@ -95,40 +88,7 @@ BEGIN
             result => data2_before_forward
         );
 
-    -- mux_4_input for data1 , data_forward_mem , data_forward_wb, zeros
-    -- sel is forward1_signal and output data1_after_forward
-
-    mux_4_input_data1_after_forward : ENTITY work.mux_4_input
-        GENERIC MAP(
-            size => 16
-        )
-        PORT MAP(
-            input_0 => data1,
-            input_1 => data_forward_mem,
-            input_2 => data_forward_wb,
-            input_3 => "0000000000000000",
-            sel => forward1_signal,
-            result => data1_after_forward
-        );
-
-    rsrc1_from_excute <= data1_after_forward;
-
-    -- mux_4_input for data2_before_forward , data_forward_mem , data_forward_wb, zeros
-    -- sel is forward2_signal
-    -- output data2_after_forward
-
-    mux_4_input_data2_after_forward : ENTITY work.mux_4_input
-        GENERIC MAP(
-            size => 16
-        )
-        PORT MAP(
-            input_0 => data2_before_forward,
-            input_1 => data_forward_mem,
-            input_2 => data_forward_wb,
-            input_3 => "0000000000000000",
-            sel => forward2_signal,
-            result => data2_after_forward
-        );
+    rsrc1_from_excute <= data1;
 
     -- alu 
     -- inputs : data1_after_forward , data2_after_forward , alu_control
@@ -161,14 +121,14 @@ BEGIN
         );
 
     -- ccr
-    -- inputs : flags_from_mem , flags_alu_out, flags_enable_alu_out , set_Carry , rti_from_wb_signal, rst , clk
+    -- inputs : flags_from_mem , flags_alu_out, flags_enable_alu_out , set_Carry , rti_total_signal, rst , clk
     -- outputs : flags_ccr
 
     ccr : ENTITY work.ccr
         PORT MAP(
             rst => rst,
             clk => clk,
-            rti_signal => rti_from_wb_signal,
+            rti_total_signal => rti_total_signal,
             set_carry => set_Carry,
             flags_enable_from_alu => flags_enable_alu_out,
             flags_from_alu => flags_alu_out,

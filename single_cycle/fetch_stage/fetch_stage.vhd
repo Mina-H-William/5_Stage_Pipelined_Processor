@@ -8,7 +8,6 @@ ENTITY fetch_stage IS
         ret_or_rti_signal : IN STD_LOGIC;
         r_src1_from_excute : IN STD_LOGIC_VECTOR (15 DOWNTO 0);
         mem_out : IN STD_LOGIC_VECTOR (15 DOWNTO 0);
-        same_pc_write_disable : IN STD_LOGIC;
         freeze_signal : IN STD_LOGIC;
         int_signal : IN STD_LOGIC;
         rti_signal : IN STD_LOGIC;
@@ -21,8 +20,6 @@ ENTITY fetch_stage IS
         memory_clk : IN STD_LOGIC;
         clk : IN STD_LOGIC;
         memory_reset : IN STD_LOGIC;
-        freeze_instruction : IN STD_LOGIC_VECTOR(15 DOWNTO 0);
-        is_immediate : IN STD_LOGIC;
 
         pc_from_fetch : OUT STD_LOGIC_VECTOR (15 DOWNTO 0);
         instruction_bits_output : OUT STD_LOGIC_VECTOR (15 DOWNTO 0);
@@ -50,92 +47,14 @@ ARCHITECTURE Behavioral OF fetch_stage IS
     SIGNAL pc_read_data_signal : STD_LOGIC_VECTOR (15 DOWNTO 0);
     SIGNAL incremented_pc_signal : STD_LOGIC_VECTOR (15 DOWNTO 0);
 
-    SIGNAL first_mux_output_signal, second_mux_output_signal, third_mux_output_signal : STD_LOGIC_VECTOR (0 DOWNTO 0);
+    SIGNAL first_mux_output_signal, second_mux_output_signal : STD_LOGIC_VECTOR (15 DOWNTO 0);
 
     SIGNAL sig_int_freeze, sig_rti_freeze, sig_freeze : STD_LOGIC;
 
     SIGNAL pc_input_signal : STD_LOGIC_VECTOR (15 DOWNTO 0);
-    ----------------------------------------------------------------------------------------------------------------------
-    -- -- Component declaration for pc_unit
-    -- COMPONENT pc_unit
-    --     PORT (
-    --         same_pc_write_disable : IN STD_LOGIC;
-    --         freeze_signal : IN STD_LOGIC;
-    --         int_signal : IN STD_LOGIC;
-    --         invalid_memory : IN STD_LOGIC;
-    --         empty_stack : IN STD_LOGIC;
-    --         reset : IN STD_LOGIC;
-    --         index_bit : IN STD_LOGIC;
-    --         result_of_pc_unit : OUT STD_LOGIC_VECTOR (2 DOWNTO 0)
-    --     );
-    -- END COMPONENT;
 
-    -- -- Component Declaration
-    -- COMPONENT memory_entity
-    --     PORT (
-    --         clk : IN STD_LOGIC;
-    --         reset : IN STD_LOGIC;
-    --         address : IN STD_LOGIC_VECTOR (11 DOWNTO 0);
-    --         write_data : IN STD_LOGIC_VECTOR (15 DOWNTO 0);
-    --         read_data : OUT STD_LOGIC_VECTOR (15 DOWNTO 0);
-    --         write_en : IN STD_LOGIC
-    --     );
-    -- END COMPONENT;
-
-    -- -- Component declaration for pipeline_register (used as program counter register)
-    -- COMPONENT pipeline_register
-    --     GENERIC (
-    --         WIDTH : INTEGER := 32 -- Set width to 32 bits for the program counter
-    --     );
-    --     PORT (
-    --         clk : IN STD_LOGIC;
-    --         flush : IN STD_LOGIC;
-    --         data_in : IN STD_LOGIC_VECTOR (WIDTH - 1 DOWNTO 0);
-    --         data_out : OUT STD_LOGIC_VECTOR (WIDTH - 1 DOWNTO 0)
-    --     );
-    -- END COMPONENT;
-
-    -- COMPONENT mux_2_input
-    --     GENERIC (
-    --         size : INTEGER := 8 -- Size of each input (bit-width)
-    --     );
-    --     PORT (
-    --         input_0 : IN STD_LOGIC_VECTOR (size - 1 DOWNTO 0); -- First input
-    --         input_1 : IN STD_LOGIC_VECTOR (size - 1 DOWNTO 0); -- Second input
-    --         sel : IN STD_LOGIC; -- Selection signal (0 or 1)
-    --         result : OUT STD_LOGIC_VECTOR (size - 1 DOWNTO 0) -- Output
-    --     );
-    -- END COMPONENT;
-
-    -- -- Instantiate the add_one component to increment the Program Counter (PC)
-    -- COMPONENT add_one
-    --     GENERIC (
-    --         width => 16 -- Assuming 16-bit width for the PC
-    --     );
-    --     PORT (
-    --         input : IN STD_LOGIC_VECTOR(15 DOWNTO 0); -- Input PC value
-    --         output : OUT STD_LOGIC_VECTOR(15 DOWNTO 0) -- Output (incremented PC)
-    --     );
-    -- END COMPONENT;
-
-    -- -- Component declaration for mux_8_input
-    -- COMPONENT mux_8_input
-    --     GENERIC (
-    --         size : INTEGER := 16 -- Width of the inputs
-    --     );
-    --     PORT (
-    --         input_0 : IN STD_LOGIC_VECTOR(size - 1 DOWNTO 0);
-    --         input_1 : IN STD_LOGIC_VECTOR(size - 1 DOWNTO 0);
-    --         input_2 : IN STD_LOGIC_VECTOR(size - 1 DOWNTO 0);
-    --         input_3 : IN STD_LOGIC_VECTOR(size - 1 DOWNTO 0);
-    --         input_4 : IN STD_LOGIC_VECTOR(size - 1 DOWNTO 0);
-    --         input_5 : IN STD_LOGIC_VECTOR(size - 1 DOWNTO 0);
-    --         input_6 : IN STD_LOGIC_VECTOR(size - 1 DOWNTO 0);
-    --         input_7 : IN STD_LOGIC_VECTOR(size - 1 DOWNTO 0);
-    --         sel : IN STD_LOGIC_VECTOR(2 DOWNTO 0); -- Selection signal
-    --         result : OUT STD_LOGIC_VECTOR(size - 1 DOWNTO 0) -- Selected output
-    --     );
-    -- END COMPONENT;
+    SIGNAL instruction_with_immediate : STD_LOGIC_VECTOR(15 DOWNTO 0);
+    ----------------------------------------------------------------------------------------------------------------------------
 
     ----------------------------------------------------------------------------------------------------------------------------
 BEGIN
@@ -162,10 +81,40 @@ BEGIN
             result => sig_freeze
         );
 
+    -- Instantiate the add_one component to increment the PC value
+    add_one_inst : ENTITY work.add_one
+        PORT MAP(
+            input => pc_read_data_signal, -- Input the current PC value
+            output => incremented_pc_signal -- Output the incremented PC value as a signal
+        );
+
+    -- Instantiate the first mux_2_input component
+    mux_inst_1 : ENTITY work.mux_2_input
+        GENERIC MAP(
+            size => 16
+        )
+        PORT MAP(
+            input_0 => incremented_pc_signal, -- incremented PC value as input_0
+            input_1 => r_src1_from_excute, -- Alternative address as input_1
+            sel => conditional_jumps, -- Selection signal to choose between inputs
+            result => first_mux_output_signal
+        );
+
+    -- Instantiate the second mux_2_input component
+    mux_inst_2 : ENTITY work.mux_2_input
+        GENERIC MAP(
+            size => 16
+        )
+        PORT MAP(
+            input_0 => first_mux_output_signal,
+            input_1 => mem_out,
+            sel => ret_or_rti_signal, -- Selection signal to choose between inputs
+            result => second_mux_output_signal
+        );
+
     -- Instantiate the pc_unit component
     pc_unit_instance : ENTITY work.pc_unit
         PORT MAP(
-            same_pc_write_disable => same_pc_write_disable,
             freeze_signal => sig_freeze,
             int_signal => int_signal,
             invalid_memory => invalid_memory,
@@ -174,6 +123,38 @@ BEGIN
             index_bit => index_bit,
             result_of_pc_unit => pc_unit_result_signal -- Connect output to signal
         );
+
+    -- Instantiate the mux_8_input component
+    mux_8_inst : ENTITY work.mux_8_input
+        GENERIC MAP(
+            size => 16 -- 16-bit wide inputs
+        )
+        PORT MAP(
+            input_0 => second_mux_output_signal,
+            input_1 => pc_read_data_signal,
+            input_2 => im_0_internal,
+            input_3 => im_1_internal,
+            input_4 => im_2_internal,
+            input_5 => im_3_internal,
+            input_6 => im_4_internal,
+            input_7 => second_mux_output_signal,
+            sel => pc_unit_result_signal,
+            result => pc_input_signal
+        );
+
+    -- Instantiate the pipeline_register as the program counter register (pc_register)
+    pc_register_inst : ENTITY work.pipeline_register
+        GENERIC MAP(
+            WIDTH => 16 -- 16-bit width for the program counter
+        )
+        PORT MAP(
+            clk => clk, -- Connect the clock signal
+            flush => '0', -- as the one who controlling here is the mux before it
+            data_in => pc_input_signal, -- Connect the new PC value input 
+            data_out => pc_read_data_signal -- Connect the output to the current PC value
+        );
+
+    pc_from_fetch <= pc_read_data_signal;
 
     -- Instantiate the memory_entity component
     memory_inst : ENTITY work.memory_entity
@@ -193,84 +174,18 @@ BEGIN
             im_4 => im_4_internal
         );
 
-    -- Instantiate the pipeline_register as the program counter register (pc_register)
-    pc_register_inst : ENTITY work.pipeline_register
-        GENERIC MAP(
-            WIDTH => 16 -- 16-bit width for the program counter
-        )
-        PORT MAP(
-            clk => clk, -- Connect the clock signal
-            flush => '0', -- as the one who controlling here is the mux before it
-            data_in => pc_input_signal, -- Connect the new PC value input 
-            data_out => pc_read_data_signal -- Connect the output to the current PC value
-        );
-
-    -- Instantiate the add_one component to increment the PC value
-    add_one_inst : ENTITY work.add_one
-        PORT MAP(
-            input => pc_read_data_signal, -- Input the current PC value
-            output => incremented_pc_signal -- Output the incremented PC value as a signal
-        );
-
-    -- Instantiate the first mux_2_input component
-    mux_inst_1 : ENTITY work.mux_2_input
-        GENERIC MAP(
-            size => 1
-        )
-        PORT MAP(
-            input_0 => incremented_pc_signal, -- incremented PC value as input_0
-            input_1 => r_src1_from_excute, -- Alternative address as input_1
-            sel => conditional_jumps, -- Selection signal to choose between inputs
-            result => first_mux_output_signal
-        );
-
-    -- Instantiate the second mux_2_input component
-    mux_inst_2 : ENTITY work.mux_2_input
-        GENERIC MAP(
-            size => 1
-        )
-        PORT MAP(
-            input_0 => first_mux_output_signal,
-            input_1 => mem_out,
-            sel => ret_or_rti_signal, -- Selection signal to choose between inputs
-            result => second_mux_output_signal
-        );
-    -- Instantiate the mux_8_input component
-    mux_8_inst : ENTITY work.mux_8_input
-        GENERIC MAP(
-            size => 16 -- 16-bit wide inputs
-        )
-        PORT MAP(
-            input_0 => second_mux_output_signal,
-            input_1 => pc_read_data_signal,
-            input_2 => im_0_internal,
-            input_3 => im_1_internal,
-            input_4 => im_2_internal,
-            input_5 => im_3_internal,
-            input_6 => im_4_internal,
-            input_7 => second_mux_output_signal,
-            sel => pc_unit_result_signal,
-            result => pc_input_signal
-        );
-
-    demux_inst : ENTITY work.demux_unit
+    demux_inst : ENTITY work.immediate_unit
         GENERIC MAP(
             size => 16 -- Set the width of input/output signals
         )
         PORT MAP(
             output_0 => instruction_bits_output, -- Connect to output 0
             output_1 => immediate_bits_output, -- Connect to output 1
+            instruction_with_immediate_output => instruction_with_immediate,
 
-            same_pc_write_disable => same_pc_write_disable, -- Connect control signals
-            freeze_signal => freeze_signal,
-
-            freeze_instruction => freeze_instruction,
             instruction_memory_result_input => instruction_memory_read_data_signal,
-
-            is_immediate => is_immediate, -- Immediate mode selection signal
+            instruction_with_immediate_input => instruction_with_immediate,
             reset => reset
         );
-
-    pc_from_fetch <= pc_read_data_signal;
 
 END Behavioral;

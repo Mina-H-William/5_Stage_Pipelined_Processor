@@ -6,10 +6,10 @@ ENTITY memory_entity IS
     PORT (
         clk : IN STD_LOGIC; -- Clock signal for write operations
         reset : IN STD_LOGIC; -- Reset signal
+        write_en : IN STD_LOGIC; -- Write enable signal
         address : IN STD_LOGIC_VECTOR (15 DOWNTO 0); -- 12-bit address for 4K memory
         write_data : IN STD_LOGIC_VECTOR (15 DOWNTO 0); -- 16-bit data to write
         read_data : OUT STD_LOGIC_VECTOR (15 DOWNTO 0); -- 16-bit data output
-        write_en : IN STD_LOGIC; -- Write enable signal
 
         -- Separate outputs for each memory element IM[0] to IM[4]
         im_0 : OUT STD_LOGIC_VECTOR (15 DOWNTO 0); -- IM[0] output

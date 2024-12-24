@@ -4,7 +4,6 @@ USE IEEE.NUMERIC_STD.ALL;
 
 ENTITY pc_unit IS
     PORT (
-        same_pc_write_disable : IN STD_LOGIC;
         freeze_signal : IN STD_LOGIC;
         int_signal : IN STD_LOGIC;
         invalid_memory : IN STD_LOGIC;
@@ -18,30 +17,9 @@ END pc_unit;
 ARCHITECTURE Behavioral OF pc_unit IS
 
     -- Signal to hold the result of OR operation
-    SIGNAL or_result : STD_LOGIC; -- 1-bit vector for OR output
-
-    -- COMPONENT or_2_input
-    --     GENERIC (
-    --         size : INTEGER := 1 -- Size of each input (bit-width)
-    --     );
-    --     PORT (
-    --         input_0 : IN STD_LOGIC_VECTOR (size - 1 DOWNTO 0); -- First input
-    --         input_1 : IN STD_LOGIC_VECTOR (size - 1 DOWNTO 0); -- Second input
-    --         result : OUT STD_LOGIC_VECTOR (size - 1 DOWNTO 0) -- Result should be a vector of the same size
-    --     );
-    -- END COMPONENT;
 
 BEGIN
-
-    -- Instantiate the OR module
-    or_instance : ENTITY work.or_2_input_1_bit
-        PORT MAP(
-            input_0 => same_pc_write_disable, -- Connect the first input
-            input_1 => freeze_signal, -- Connect the second input
-            result => or_result -- OR operation result
-        );
-
-    PROCESS (or_result, int_signal, invalid_memory, empty_stack, reset, index_bit)
+    PROCESS (freeze_signal, int_signal, invalid_memory, empty_stack, reset, index_bit)
     BEGIN
         IF reset = '1' THEN
             result_of_pc_unit <= "010"; -- 2
@@ -58,7 +36,7 @@ BEGIN
         ELSIF int_signal = '1' AND index_bit = '1' THEN
             result_of_pc_unit <= "110";
             -- handle freeze is the last priority 
-        ELSIF or_result = '1' THEN
+        ELSIF freeze_signal = '1' THEN
             result_of_pc_unit <= "001";
         ELSE
             result_of_pc_unit <= "000"; -- default is the next instruction 

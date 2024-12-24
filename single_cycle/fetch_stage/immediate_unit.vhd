@@ -3,7 +3,7 @@ USE ieee.std_logic_1164.ALL;
 USE ieee.std_logic_arith.ALL;
 USE ieee.std_logic_unsigned.ALL;
 
-ENTITY demux_unit IS
+ENTITY immediate_unit IS
     GENERIC (
         size : INTEGER := 16 -- Default size of the input/output signal
     );
@@ -18,9 +18,9 @@ ENTITY demux_unit IS
         reset : IN STD_LOGIC
 
     );
-END demux_unit;
+END immediate_unit;
 
-ARCHITECTURE Behavioral OF demux_unit IS
+ARCHITECTURE Behavioral OF immediate_unit IS
 BEGIN
 
     PROCESS (instruction_memory_result_input, reset)
@@ -29,7 +29,6 @@ BEGIN
             output_0 <= (OTHERS => '0');
             output_1 <= (OTHERS => '0');
             instruction_with_immediate_output <= (OTHERS => '0');
-
         ELSE
             IF instruction_with_immediate_input = (OTHERS => '0') THEN
                 -- idd 00100, ldm 01011, ldd 01100, std 01101
@@ -42,9 +41,13 @@ BEGIN
                     output_1 <= (OTHERS => '0');
                 ELSE
                     output_0 <= instruction_with_immediate_input;
-                    output_1 <= instruction_memory_result_input;
+                    output_1 <= (OTHERS => '0');
                     instruction_with_immediate_output <= (OTHERS => '0');
                 END IF;
+            ELSE
+                output_0 <= instruction_with_immediate_input;
+                output_1 <= instruction_memory_result_input;
+                instruction_with_immediate_output <= (OTHERS => '0');
             END IF;
         END IF;
     END PROCESS;

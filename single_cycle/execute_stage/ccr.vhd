@@ -11,6 +11,7 @@ ENTITY ccr IS
         rst : IN STD_LOGIC; -- Reset signal
         clk : IN STD_LOGIC; -- Clock signal
         rti_signal : IN STD_LOGIC; -- RTI signal
+        write_flags_done : IN STD_LOGIC; -- Write flags done signal
         set_carry : IN STD_LOGIC; -- Set carry signal
         flags_enable_from_alu : IN STD_LOGIC_VECTOR (2 DOWNTO 0); -- Flags enable
         flags_from_alu : IN STD_LOGIC_VECTOR (2 DOWNTO 0); -- Flags
@@ -21,13 +22,23 @@ END ccr;
 
 ARCHITECTURE ccr_arch OF ccr IS
     SIGNAL flags : STD_LOGIC_VECTOR (2 DOWNTO 0); -- Flags
+    SIGNAL sig_rti_total : STD_LOGIC;
 BEGIN
+
+    instance_of_and_2_input_1_bit : ENTITY work.and_2_input_1_bit
+        PORT MAP(
+            input_0 => rti_signal,
+            input_1 => NOT(write_flags_done),
+            result => sig_rti_total
+        );
+
     PROCESS (clk, rst)
     BEGIN
         IF rst = '1' THEN
             flags <= (OTHERS => '0');
+            WRITE_FLAGS_DONE <= '0';
         ELSIF rising_edge(clk) THEN
-            IF (rti_signal = '1') THEN
+            IF (sig_rti_total = '1') THEN
                 flags <= flags_in_rti;
             END IF;
             IF (flags_enable_from_alu(0) = '1') THEN

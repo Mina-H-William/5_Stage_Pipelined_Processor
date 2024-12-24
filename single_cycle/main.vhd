@@ -266,13 +266,13 @@ BEGIN
     WRITE_BACK_STAGE : ENTITY work.mux_2_input
         GENERIC MAP(
             size => 16 -- Size of each input (bit-width)
+        )
+        PORT MAP(
+            input_0 => sig_alu_out_from_EX, -- First input
+            input_1 => sig_mem_out_from_MEM, -- Second input
+            sel => sig_mem_to_reg_from_ID, -- Selection signal (0 or 1)
+            result => sig_write_data_from_MEM-- Output
         );
-    PORT MAP(
-        input_0 => sig_alu_out_from_EX, -- First input
-        input_1 => sig_mem_out_from_MEM, -- Second input
-        sel => sig_mem_to_reg_from_ID, -- Selection signal (0 or 1)
-        result => sig_write_data_from_MEM-- Output
-    );
 
     PROCESS (sig_out_from_ID, sig_alu_out_from_EX)
     BEGIN
@@ -282,9 +282,4 @@ BEGIN
             output_port <= (OTHERS => 'Z');
         END IF;
     END PROCESS;
-ELSE
-    output_port <= (OTHERS =>);
-END IF;
-END PROCESS;
-
 END Behavioral;

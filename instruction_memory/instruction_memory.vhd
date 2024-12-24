@@ -7,8 +7,10 @@ USE std.textio.ALL;
 
 ENTITY instruction_memory IS
     PORT (
-        pc : IN STD_LOGIC_VECTOR(15 DOWNTO 0);
-        enable : IN STD_LOGIC;
+        pc      : IN STD_LOGIC_VECTOR(15 DOWNTO 0);
+        enable  : IN STD_LOGIC;
+        clk     : IN STD_LOGIC; -- Clock input
+        reset : IN STD_LOGIC; -- Reset input
         instruction : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
         IM_0 : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
         IM_1 : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
@@ -37,26 +39,35 @@ BEGIN
     IM_6 <= inst_memory(6);
     IM_7 <= inst_memory(7);
 
-    -- Combinatorial process for instruction fetch
-    PROCESS (pc, enable,address, inst_memory, seed_memory)
-        FILE insturcions_file : text;
+    -- Synchronous process for instruction fetch with clk and reset
+    PROCESS (clk, reset)
+        FILE instructions_file : text;
         VARIABLE file_line : line;
         VARIABLE temp_data : STD_LOGIC_VECTOR(15 DOWNTO 0);
     BEGIN
-        IF enable = '1' THEN
-            address <= to_integer(unsigned(pc));
-            instruction <= inst_memory(to_integer(unsigned(pc)));
-        end if;
-        if seed_memory = '1' then
-            file_open(insturcions_file, "input.txt",  read_mode);
+        -- Memory seeding logic
+        IF seed_memory = '1' THEN
+            file_open(instructions_file, "input.txt", read_mode);
             FOR i IN inst_memory'RANGE LOOP
-                IF NOT endfile(insturcions_file) THEN
-                    readline(insturcions_file, file_line);
+                IF NOT endfile(instructions_file) THEN
+                    readline(instructions_file, file_line);
                     read(file_line, temp_data);
                     inst_memory(i) <= temp_data;
                 END IF;
             END LOOP;
-            seed_memory <= '0';
+            seed_memory <= '0'; -- Set flag to prevent re-seeding
+            file_close(instructions_file); -- Close file after seeding
+        ELSIF reset = '1' THEN
+            -- Reset logic: Initialize memory to default state (optional)
+            inst_memory <= (OTHERS => (OTHERS => '0'));
+            instruction <= (OTHERS => '0');
+            seed_memory <= '1'; -- Re-enable memory seeding after reset
+        ELSIF rising_edge(clk) THEN
+            -- Instruction fetch logic
+            IF enable = '1' THEN
+                address <= to_integer(unsigned(pc));
+                instruction <= inst_memory(to_integer(unsigned(pc)));
+            END IF;
         END IF;
     END PROCESS;
 

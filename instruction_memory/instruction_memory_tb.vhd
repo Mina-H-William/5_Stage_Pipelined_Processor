@@ -11,6 +11,8 @@ ARCHITECTURE behavior OF instruction_memory_tb IS
         PORT (
             pc          : IN STD_LOGIC_VECTOR(15 DOWNTO 0);
             enable      : IN STD_LOGIC;
+            clk         : IN STD_LOGIC;  -- Clock input
+            rst         : IN STD_LOGIC;  -- Reset input
             instruction : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
             IM_0        : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
             IM_1        : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
@@ -26,6 +28,8 @@ ARCHITECTURE behavior OF instruction_memory_tb IS
     -- Signals to connect to UUT
     SIGNAL pc          : STD_LOGIC_VECTOR(15 DOWNTO 0) := (others => '0');
     SIGNAL enable      : STD_LOGIC := '0';
+    SIGNAL clk         : STD_LOGIC := '0';  -- Clock signal
+    SIGNAL rst         : STD_LOGIC := '0';  -- Reset signal
     SIGNAL instruction : STD_LOGIC_VECTOR(15 DOWNTO 0);
     SIGNAL IM_0        : STD_LOGIC_VECTOR(15 DOWNTO 0);
     SIGNAL IM_1        : STD_LOGIC_VECTOR(15 DOWNTO 0);
@@ -35,12 +39,15 @@ ARCHITECTURE behavior OF instruction_memory_tb IS
     SIGNAL IM_5        : STD_LOGIC_VECTOR(15 DOWNTO 0);
     SIGNAL IM_6        : STD_LOGIC_VECTOR(15 DOWNTO 0);
     SIGNAL IM_7        : STD_LOGIC_VECTOR(15 DOWNTO 0);
+    
 BEGIN
     -- Instantiate the unit under test (UUT)
     uut: instruction_memory
         PORT MAP (
             pc => pc,
             enable => enable,
+            clk => clk,
+            rst => rst,
             instruction => instruction,
             IM_0 => IM_0,
             IM_1 => IM_1,
@@ -52,41 +59,79 @@ BEGIN
             IM_7 => IM_7
         );
 
+    -- Clock generation
+    clk_process: PROCESS
+    BEGIN
+        clk <= '0';
+        WAIT FOR 5 ns;
+        clk <= '1';
+        WAIT FOR 5 ns;
+    END PROCESS;
+
     -- Stimulus process
     stim_proc: PROCESS
     BEGIN
         -- Initial setup
         enable <= '0';
-        WAIT FOR 10 ns;
-
+        rst <= '1';  -- Assert reset initially
+        WAIT FOR 20 ns;  -- Wait for 2 clock cycles
+        
+        rst <= '0';  -- Deassert reset
+        
         -- Test case: Load instructions from the file
         enable <= '1';  -- Enable loading the instructions from file
         WAIT FOR 10 ns;
 
-        -- Disable loading and simulate instruction fetch for the first five memory locations
-        -- enable <= '0';  -- Disable loading to test instruction fetch
-
-        -- Test: Read from instruction memory and check the first 5 locations
+        -- Test: Read from instruction memory and check the first 5 locations (addresses 0 to 4)
         pc <= "0000000000000000";  -- Fetch instruction at address 0
         WAIT FOR 10 ns;
     
-
         pc <= "0000000000000001";  -- Fetch instruction at address 1
         WAIT FOR 10 ns;
 
-
         pc <= "0000000000000010";  -- Fetch instruction at address 2
         WAIT FOR 10 ns;
-   
 
         pc <= "0000000000000011";  -- Fetch instruction at address 3
         WAIT FOR 10 ns;
-  
+
         pc <= "0000000000000100";  -- Fetch instruction at address 4
         WAIT FOR 10 ns;
 
-        -- Add more address checks as needed
+        -- Test: Fetch instructions for addresses >= 20
+        pc <= "0000000000010100";  -- Fetch instruction at address 20
+        WAIT FOR 10 ns;
+
+        pc <= "0000000000010101";  -- Fetch instruction at address 21
+        WAIT FOR 10 ns;
+
+        pc <= "0000000000010110";  -- Fetch instruction at address 22
+        WAIT FOR 10 ns;
+
+        pc <= "0000000000010111";  -- Fetch instruction at address 23
+        WAIT FOR 10 ns;
+
+        pc <= "0000000000011000";  -- Fetch instruction at address 24
+        WAIT FOR 10 ns;
+
+        pc <= "0000000000011001";  -- Fetch instruction at address 25
+        WAIT FOR 10 ns;
+
+        pc <= "0000000000011010";  -- Fetch instruction at address 26
+        WAIT FOR 10 ns;
+
+        pc <= "0000000000011011";  -- Fetch instruction at address 27
+        WAIT FOR 10 ns;
+
+        pc <= "0000000000011100";  -- Fetch instruction at address 28
+        WAIT FOR 10 ns;
+
+        pc <= "0000000000011101";  -- Fetch instruction at address 29
+        WAIT FOR 10 ns;
+
+        -- Add more address checks as needed (addresses >= 30)
 
         WAIT; -- End simulation
     END PROCESS;
+
 END behavior;

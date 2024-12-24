@@ -6,7 +6,7 @@ USE IEEE.STD_LOGIC_UNSIGNED.ALL;
 ENTITY control_unit IS
     PORT (
         opcode : IN STD_LOGIC_VECTOR (4 DOWNTO 0);
-        ret_or_rti_signal : OUT STD_LOGIC;
+        ret_signal : OUT STD_LOGIC;
         reg_write_signal : OUT STD_LOGIC;
         jmp_signal : OUT STD_LOGIC;
         mem_to_reg_signal : OUT STD_LOGIC;
@@ -37,7 +37,7 @@ ARCHITECTURE Behavioral OF control_unit IS
 BEGIN
     PROCESS (opcode)
     BEGIN
-        ret_or_rti_signal <= '0';
+        ret_signal <= '0';
         reg_write_signal <= '0';
         jmp_signal <= '0';
         mem_to_reg_signal <= '0';
@@ -124,14 +124,13 @@ BEGIN
                 sp_write_signal <= '1';
                 add_or_subtract_signal <= '1';
             WHEN "10101" => -- ret
-                ret_or_rti_signal <= '1';
+                ret_signal <= '1';
                 mem_read_signal <= '1';
                 sp_write_signal <= '1';
             WHEN "10110" => -- int
                 int_signal <= '1';
                 mem_write_signal <= '1';
             WHEN "10111" => -- rti
-                ret_or_rti_signal <= '1';
                 mem_read_signal <= '1';
                 sp_write_signal <= '1';
                 rti_signal <= '1';

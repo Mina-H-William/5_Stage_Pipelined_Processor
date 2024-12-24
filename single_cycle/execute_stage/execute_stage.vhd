@@ -36,7 +36,8 @@ ENTITY execute_stage IS
         data_out : OUT STD_LOGIC_VECTOR (15 DOWNTO 0); -- Alu out
         -- flags
         set_Carry : IN STD_LOGIC; -- Set carry signal
-        rti_total_signal : IN STD_LOGIC; -- Return from interrupt signal
+        rti_signal : IN STD_LOGIC; -- Return from interrupt signal
+        write_flags_done : IN STD_LOGIC;
         flags_from_mem : IN STD_LOGIC_VECTOR (2 DOWNTO 0); -- Flags from memory
         flags_out : OUT STD_LOGIC_VECTOR (2 DOWNTO 0) -- Flags out
     );
@@ -128,7 +129,8 @@ BEGIN
         PORT MAP(
             rst => rst,
             clk => clk,
-            rti_total_signal => rti_total_signal,
+            rti_signal => rti_signal,
+            write_flags_done => write_flags_done,
             set_carry => set_Carry,
             flags_enable_from_alu => flags_enable_alu_out,
             flags_from_alu => flags_alu_out,

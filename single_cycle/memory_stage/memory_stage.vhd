@@ -15,7 +15,6 @@ ENTITY memory_stage IS
         alu_input_2 : IN STD_LOGIC_VECTOR(15 DOWNTO 0);
         flags : IN STD_LOGIC_VECTOR(2 DOWNTO 0);
         sp : IN STD_LOGIC_VECTOR(15 DOWNTO 0);
-        sp_write_back : IN STD_LOGIC_VECTOR(15 DOWNTO 0);
         first_write_mem_done : IN STD_LOGIC;
 
         data_out : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);

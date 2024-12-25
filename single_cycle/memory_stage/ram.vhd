@@ -27,6 +27,7 @@ BEGIN
     BEGIN
         IF reset = '1' THEN
             ram <= (OTHERS => (OTHERS => '0'));
+            data_out <= (OTHERS => '0');
         ELSIF rising_edge(clk) THEN
             IF we = '1' THEN
                 ram(to_integer(unsigned(address))) <= data_in;

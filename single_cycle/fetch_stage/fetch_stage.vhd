@@ -178,7 +178,7 @@ BEGIN
         )
         PORT MAP(
             clk => clk, -- Connect the clock signal
-            flush => reset, -- as the one who controlling here is the mux before it
+            flush => '0', -- as the one who controlling here is the mux before it
             data_in => pc_input_signal, -- Connect the new PC value input 
             data_out => pc_read_data_signal -- Connect the output to the current PC value
         );

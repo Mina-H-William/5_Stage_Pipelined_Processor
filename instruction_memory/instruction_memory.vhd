@@ -11,11 +11,11 @@ ENTITY instruction_memory IS
         clk : IN STD_LOGIC; -- Clock input
         reset : IN STD_LOGIC; -- Reset input
         instruction : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
-        IM_0 : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
-        IM_1 : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
-        IM_2 : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
-        IM_3 : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
-        IM_4 : OUT STD_LOGIC_VECTOR(15 DOWNTO 0)
+        im_0 : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
+        im_1 : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
+        im_2 : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
+        im_3 : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
+        im_4 : OUT STD_LOGIC_VECTOR(15 DOWNTO 0)
     );
 END instruction_memory;
 
@@ -26,11 +26,11 @@ ARCHITECTURE behavior OF instruction_memory IS
     SIGNAL seed_memory : STD_LOGIC := '1';
 BEGIN
 
-    IM_0 <= inst_memory(0);
-    IM_1 <= inst_memory(1);
-    IM_2 <= inst_memory(2);
-    IM_3 <= inst_memory(3);
-    IM_4 <= inst_memory(4);
+    im_0 <= inst_memory(0);
+    im_1 <= inst_memory(1);
+    im_2 <= inst_memory(2);
+    im_3 <= inst_memory(3);
+    im_4 <= inst_memory(4);
 
     -- Synchronous process for instruction fetch with clk and reset
     PROCESS (clk, reset)

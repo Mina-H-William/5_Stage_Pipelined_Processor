@@ -40,7 +40,7 @@ BEGIN
                     output_0 <= (OTHERS => '0');
                     output_1 <= (OTHERS => '0');
                 ELSE
-                    output_0 <= instruction_with_immediate_input;
+                    output_0 <= instruction_memory_result_input;
                     output_1 <= (OTHERS => '0');
                     instruction_with_immediate_output <= (OTHERS => '0');
                 END IF;

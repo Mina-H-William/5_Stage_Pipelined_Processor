@@ -41,7 +41,6 @@ ARCHITECTURE Behavioral OF main IS
     SIGNAL sig_pc_from_ID : STD_LOGIC_VECTOR (15 DOWNTO 0);
     SIGNAL sig_sp_write_from_ID : STD_LOGIC;
     SIGNAL sig_add_or_subtract_from_ID : STD_LOGIC;
-    SIGNAL sig_reg_write_from_ID : STD_LOGIC;
     SIGNAL sig_jmp_from_ID : STD_LOGIC;
     SIGNAL sig_mem_to_reg_from_ID : STD_LOGIC;
     SIGNAL sig_mem_read_from_ID : STD_LOGIC;
@@ -65,7 +64,6 @@ ARCHITECTURE Behavioral OF main IS
     -- outputs of EX
     SIGNAL sig_conditional_jumps_from_EX : STD_LOGIC;
     SIGNAL sig_write_flags_done_from_EX : STD_LOGIC;
-    SIGNAL sig_reg_write_from_EX : STD_LOGIC;
     SIGNAL sig_alu_out_from_EX : STD_LOGIC_VECTOR (15 DOWNTO 0);
     SIGNAL sig_flags_from_EX : STD_LOGIC_VECTOR (2 DOWNTO 0);
     -- outputs of MEM
@@ -153,13 +151,11 @@ BEGIN
             opcode => sig_instruction_from_IF (15 DOWNTO 11),
             clk => clk,
             reset => reset,
-            write_enable => sig_reg_write_from_EX,
             read_register_1 => sig_r_src_1_from_IF,
             read_register_2 => sig_r_src_2_from_IF,
             write_register => sig_r_dest_from_IF,
             write_data => sig_write_data_from_MEM,
             ret_signal => sig_ret_from_ID,
-            reg_write_signal => sig_reg_write_from_ID,
             jmp_signal => sig_jmp_from_ID,
             mem_to_reg_signal => sig_mem_to_reg_from_ID,
             mem_read_signal => sig_mem_read_from_ID,
@@ -233,7 +229,6 @@ BEGIN
             data1 => sig_read_data_1_from_ID, -- Data 1
             data2 => sig_read_data_2_from_ID, -- Data 2
             immediate => sig_immediate_bits_from_IF, -- Immediate
-            rsrc1_from_excute => sig_read_data_1_from_ID, -- Source 1 from IDecute
             data_out => sig_alu_out_from_EX, -- Alu out
             -- flags
             set_Carry => sig_set_carry_from_ID, -- Set carry signal

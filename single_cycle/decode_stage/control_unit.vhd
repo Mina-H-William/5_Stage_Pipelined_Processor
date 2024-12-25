@@ -79,8 +79,10 @@ BEGIN
                 is_immediate_signal <= '1';
             WHEN "00101" => -- out
                 out_signal <= '1';
+                pass_data_1_signal <= '1';
             WHEN "00110" => -- in
                 in_signal <= '1';
+                reg_write_signal <= '1';
             WHEN "00111" => -- not
                 reg_write_signal <= '1';
                 not_signal <= '1';

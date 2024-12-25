@@ -32,7 +32,6 @@ ENTITY execute_stage IS
         data1 : IN STD_LOGIC_VECTOR (15 DOWNTO 0); -- Data 1
         data2 : IN STD_LOGIC_VECTOR (15 DOWNTO 0); -- Data 2
         immediate : IN STD_LOGIC_VECTOR (15 DOWNTO 0); -- Immediate
-        rsrc1_from_excute : OUT STD_LOGIC_VECTOR (15 DOWNTO 0); -- Source 1 from execute
         data_out : OUT STD_LOGIC_VECTOR (15 DOWNTO 0); -- Alu out
         -- flags
         set_Carry : IN STD_LOGIC; -- Set carry signal
@@ -88,8 +87,6 @@ BEGIN
             input_1 => immediate,
             result => data2_before_forward
         );
-
-    rsrc1_from_excute <= data1;
 
     -- alu 
     -- inputs : data1_after_forward , data2_after_forward , alu_control

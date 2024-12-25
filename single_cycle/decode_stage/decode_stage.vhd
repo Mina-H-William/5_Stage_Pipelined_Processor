@@ -6,13 +6,11 @@ ENTITY decode_stage IS
         opcode : IN STD_LOGIC_VECTOR (4 DOWNTO 0);
         clk : IN STD_LOGIC;
         reset : IN STD_LOGIC;
-        write_enable : IN STD_LOGIC;
         read_register_1 : IN STD_LOGIC_VECTOR(2 DOWNTO 0);
         read_register_2 : IN STD_LOGIC_VECTOR(2 DOWNTO 0);
         write_register : IN STD_LOGIC_VECTOR(2 DOWNTO 0);
         write_data : IN STD_LOGIC_VECTOR(15 DOWNTO 0);
         ret_signal : OUT STD_LOGIC;
-        reg_write_signal : OUT STD_LOGIC;
         jmp_signal : OUT STD_LOGIC;
         mem_to_reg_signal : OUT STD_LOGIC;
         mem_read_signal : OUT STD_LOGIC;
@@ -42,6 +40,8 @@ END decode_stage;
 
 ARCHITECTURE Behavioral OF decode_stage IS
 
+    SIGNAL write_enable : STD_LOGIC;
+
 BEGIN
 
     -- Control Unit
@@ -49,7 +49,7 @@ BEGIN
         PORT MAP(
             opcode => opcode,
             ret_signal => ret_signal,
-            reg_write_signal => reg_write_signal,
+            reg_write_signal => write_enable,
             jmp_signal => jmp_signal,
             mem_to_reg_signal => mem_to_reg_signal,
             mem_read_signal => mem_read_signal,

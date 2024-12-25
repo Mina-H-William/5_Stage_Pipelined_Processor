@@ -20,7 +20,7 @@ END pipeline_register;
 ARCHITECTURE Behavioral OF pipeline_register IS
     SIGNAL register_value : STD_LOGIC_VECTOR (WIDTH - 1 DOWNTO 0);
 BEGIN
-    PROCESS (clk)
+    PROCESS (clk, flush)
     BEGIN
         IF flush = '1' THEN
             -- Reset the register value

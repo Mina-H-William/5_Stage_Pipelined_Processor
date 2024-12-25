@@ -47,7 +47,7 @@ ARCHITECTURE Behavioral OF fetch_stage IS
     SIGNAL pc_read_data_signal : STD_LOGIC_VECTOR (15 DOWNTO 0);
     SIGNAL incremented_pc_signal : STD_LOGIC_VECTOR (15 DOWNTO 0);
 
-    SIGNAL first_mux_output_signal, second_mux_output_signal, third_mux_output_signal : STD_LOGIC_VECTOR (0 DOWNTO 0);
+    SIGNAL first_mux_output_signal, second_mux_output_signal, third_mux_output_signal : STD_LOGIC_VECTOR (15 DOWNTO 0);
 
     SIGNAL pc_input_signal : STD_LOGIC_VECTOR (15 DOWNTO 0);
     ----------------------------------------------------------------------------------------------------------------------
@@ -180,6 +180,9 @@ BEGIN
 
     -- Instantiate the add_one component to increment the PC value
     add_one_inst : ENTITY work.add_one
+        GENERIC MAP(
+            size => 16
+        )
         PORT MAP(
             input => pc_read_data_signal, -- Input the current PC value
             output => incremented_pc_signal -- Output the incremented PC value as a signal
@@ -188,7 +191,7 @@ BEGIN
     -- Instantiate the first mux_2_input component
     mux_inst_1 : ENTITY work.mux_2_input
         GENERIC MAP(
-            size => 1
+            size => 16
         )
         PORT MAP(
             input_0 => incremented_pc_signal, -- incremented PC value as input_0
@@ -200,7 +203,7 @@ BEGIN
     -- Instantiate the second mux_2_input component
     mux_inst_2 : ENTITY work.mux_2_input
         GENERIC MAP(
-            size => 1
+            size => 16
         )
         PORT MAP(
             input_0 => first_mux_output_signal,

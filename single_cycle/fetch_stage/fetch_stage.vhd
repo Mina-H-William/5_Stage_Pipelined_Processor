@@ -41,10 +41,10 @@ ARCHITECTURE Behavioral OF fetch_stage IS
     -- Internal signals to connect with the memory component
     SIGNAL instruction_memory_read_data_signal : STD_LOGIC_VECTOR(15 DOWNTO 0); -- Internal signal for read_data from memory
     SIGNAL im_0_internal : STD_LOGIC_VECTOR(15 DOWNTO 0); -- Internal signal for IM[0]
-    SIGNAL im_1_internal : STD_LOGIC_VECTOR(15 DOWNTO 0); -- Internal signal for IM[1]
-    SIGNAL im_2_internal : STD_LOGIC_VECTOR(15 DOWNTO 0); -- Internal signal for IM[2]
-    SIGNAL im_3_internal : STD_LOGIC_VECTOR(15 DOWNTO 0); -- Internal signal for IM[3]
-    SIGNAL im_4_internal : STD_LOGIC_VECTOR(15 DOWNTO 0); -- Internal signal for IM[4]
+    SIGNAL im_2_internal : STD_LOGIC_VECTOR(15 DOWNTO 0); -- Internal signal for IM[1]
+    SIGNAL im_4_internal : STD_LOGIC_VECTOR(15 DOWNTO 0); -- Internal signal for IM[2]
+    SIGNAL im_6_internal : STD_LOGIC_VECTOR(15 DOWNTO 0); -- Internal signal for IM[3]
+    SIGNAL im_8_internal : STD_LOGIC_VECTOR(15 DOWNTO 0); -- Internal signal for IM[4]
 
     SIGNAL pc_read_data_signal : STD_LOGIC_VECTOR (15 DOWNTO 0);
     SIGNAL incremented_pc_signal : STD_LOGIC_VECTOR (15 DOWNTO 0);
@@ -162,10 +162,10 @@ BEGIN
             input_0 => second_mux_output_signal,
             input_1 => pc_read_data_signal,
             input_2 => im_0_internal,
-            input_3 => im_1_internal,
-            input_4 => im_2_internal,
-            input_5 => im_3_internal,
-            input_6 => im_4_internal,
+            input_3 => im_2_internal,
+            input_4 => im_4_internal,
+            input_5 => im_6_internal,
+            input_6 => im_8_internal,
             input_7 => second_mux_output_signal,
             sel => pc_unit_result_signal,
             result => pc_input_signal
@@ -195,10 +195,10 @@ BEGIN
 
             -- Connect internal signals to IM[0] to IM[4] outputs
             im_0 => im_0_internal,
-            im_1 => im_1_internal,
             im_2 => im_2_internal,
-            im_3 => im_3_internal,
-            im_4 => im_4_internal
+            im_4 => im_4_internal,
+            im_6 => im_6_internal,
+            im_8 => im_8_internal
         );
 
     temp <= instruction_memory_read_data_signal;

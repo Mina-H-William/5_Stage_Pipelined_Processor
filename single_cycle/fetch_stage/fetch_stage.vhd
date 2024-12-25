@@ -21,6 +21,8 @@ ENTITY fetch_stage IS
         clk : IN STD_LOGIC;
         memory_reset : IN STD_LOGIC;
 
+        temp : OUT STD_LOGIC_VECTOR (15 DOWNTO 0);
+
         pc_from_fetch : OUT STD_LOGIC_VECTOR (15 DOWNTO 0);
         instruction_bits_output : OUT STD_LOGIC_VECTOR (15 DOWNTO 0);
         immediate_bits_output : OUT STD_LOGIC_VECTOR (15 DOWNTO 0)
@@ -176,7 +178,7 @@ BEGIN
         )
         PORT MAP(
             clk => clk, -- Connect the clock signal
-            flush => '0', -- as the one who controlling here is the mux before it
+            flush => reset, -- as the one who controlling here is the mux before it
             data_in => pc_input_signal, -- Connect the new PC value input 
             data_out => pc_read_data_signal -- Connect the output to the current PC value
         );
@@ -184,14 +186,12 @@ BEGIN
     pc_from_fetch <= pc_read_data_signal;
 
     -- Instantiate the memory_entity component
-    memory_inst : ENTITY work.memory_entity
+    memory_inst : ENTITY work.instruction_memory
         PORT MAP(
             clk => memory_clk, -- Connect clock
             reset => memory_reset, -- Connect reset signal
-            address => pc_read_data_signal, -- Connect address (PC)
-            write_data => write_data_signal, -- Write data (not used in fetch stage) /////from the assembler
-            read_data => instruction_memory_read_data_signal, -- Connect output to signal 
-            write_en => write_en_signal, -- Disable write in fetch stage  /////from the assembler
+            pc => pc_read_data_signal, -- Connect address (PC)
+            instruction => instruction_memory_read_data_signal, -- Connect output to signal 
 
             -- Connect internal signals to IM[0] to IM[4] outputs
             im_0 => im_0_internal,
@@ -200,6 +200,8 @@ BEGIN
             im_3 => im_3_internal,
             im_4 => im_4_internal
         );
+
+    temp <= instruction_memory_read_data_signal;
 
     demux_inst : ENTITY work.immediate_unit
         GENERIC MAP(

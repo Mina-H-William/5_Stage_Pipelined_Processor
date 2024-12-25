@@ -13,7 +13,12 @@ ENTITY main IS
         epc : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
         ccr : OUT STD_LOGIC_VECTOR(2 DOWNTO 0);
         stack_pointer : OUT STD_LOGIC_VECTOR (15 DOWNTO 0);
-        pc : OUT STD_LOGIC_VECTOR (15 DOWNTO 0)
+        pc : OUT STD_LOGIC_VECTOR (15 DOWNTO 0);
+        instruction : OUT STD_LOGIC_VECTOR (15 DOWNTO 0);
+        immediate : OUT STD_LOGIC_VECTOR (15 DOWNTO 0);
+        rsrc1 : OUT STD_LOGIC_VECTOR (15 DOWNTO 0);
+        temp : OUT STD_LOGIC_VECTOR (15 DOWNTO 0);
+        rsrc2 : OUT STD_LOGIC_VECTOR (15 DOWNTO 0)
     );
 END main;
 
@@ -103,10 +108,16 @@ BEGIN
             clk => clk,
             memory_reset => memory_reset,
 
+            temp => temp,
+
             pc_from_fetch => sig_pc_from_IF,
             instruction_bits_output => sig_instruction_from_IF,
             immediate_bits_output => sig_immediate_bits_from_IF
         );
+
+    pc <= sig_pc_from_IF;
+    instruction <= sig_instruction_from_IF;
+    immediate <= sig_immediate_bits_from_IF;
 
     EXCEPTION_WRAPPER : ENTITY work.exception_wrapper
         PORT MAP(
@@ -129,6 +140,8 @@ BEGIN
             add_or_subtract_signal => sig_add_or_subtract_from_ID,
             data_out => sig_sp_from_ID
         );
+
+    stack_pointer <= sig_sp_from_ID;
 
     sig_r_src_1_from_IF <= sig_instruction_from_IF (10 DOWNTO 8);
     sig_r_src_2_from_IF <= sig_instruction_from_IF (4 DOWNTO 2);
@@ -172,6 +185,9 @@ BEGIN
             read_data_1 => sig_read_data_1_from_ID,
             read_data_2 => sig_read_data_2_from_ID
         );
+
+    rsrc1 <= sig_read_data_1_from_ID;
+    rsrc2 <= sig_read_data_2_from_ID;
 
     INT_UNIT : ENTITY work.int_unit
         PORT MAP(
@@ -226,6 +242,8 @@ BEGIN
             flags_from_mem => sig_mem_out_from_MEM(2 DOWNTO 0), -- Flags from memory
             flags_out => sig_flags_from_EX-- Flags out
         );
+
+    ccr <= sig_flags_from_EX;
 
     MEMORY_STAGE : ENTITY work.memory_stage
         PORT MAP(

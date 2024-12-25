@@ -534,4 +534,14 @@ BEGIN
             data2 => sig_alu_out_from_WB,
             writeback_stage_out => sig_write_data_from_WB
         );
+
+    PROCESS (sig_out_from_EX, sig_alu_out_from_EX)
+    BEGIN
+        IF (sig_out_from_EX = '1') THEN
+            output_port <= sig_alu_out_from_EX;
+        ELSE
+            output_port <= (OTHERS => 'z');
+        END IF;
+    END PROCESS;
+
 END Behavioral;

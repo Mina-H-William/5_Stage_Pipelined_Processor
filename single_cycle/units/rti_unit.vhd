@@ -16,13 +16,13 @@ END rti_unit;
 
 ARCHITECTURE Behavioral OF rti_unit IS
     SIGNAL sig_total_input : STD_LOGIC;
-
+    SIGNAL not_flags_DONE_input : STD_LOGIC;
 BEGIN
-
+    not_flags_DONE_input <= NOT(WRITE_FLAGS_DONE_input);
     instance_and_2_input_1_bit : ENTITY work.and_2_input_1_bit
         PORT MAP(
             input_0 => rti_signal,
-            input_1 => NOT(WRITE_FLAGS_DONE_input),
+            input_1 => not_flags_DONE_input,
             result => sig_total_input
         );
 

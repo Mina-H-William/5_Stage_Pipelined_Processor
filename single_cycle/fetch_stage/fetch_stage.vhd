@@ -59,22 +59,30 @@ ARCHITECTURE Behavioral OF fetch_stage IS
 
     SIGNAL sig_rti_and_write_flags : STD_LOGIC;
 
+    SIGNAL not_first_write_mem_done : STD_LOGIC;
+
+    SIGNAL not_write_flags_done : STD_LOGIC;
+
     ----------------------------------------------------------------------------------------------------------------------------
 
     ----------------------------------------------------------------------------------------------------------------------------
 BEGIN
 
+    not_first_write_mem_done <= NOT(first_write_mem_done);
+
     int_freeze_and_2_input : ENTITY work.and_2_input_1_bit
         PORT MAP(
             input_0 => int_signal, -- First input
-            input_1 => NOT(first_write_mem_done), -- second input
+            input_1 => not_first_write_mem_done, -- second input
             result => sig_int_freeze
         );
+
+    not_write_flags_done <= NOT(write_flags_done);
 
     rti_freeze_and_2_input : ENTITY work.and_2_input_1_bit
         PORT MAP(
             input_0 => rti_signal, -- First input
-            input_1 => NOT(write_flags_done), -- second input
+            input_1 => not_write_flags_done, -- second input
             result => sig_rti_freeze
         );
 

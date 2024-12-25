@@ -13,7 +13,6 @@ END stack_wrapper;
 
 ARCHITECTURE Behavioral OF stack_wrapper IS
     -- Internal signals for exceptions
-    SIGNAL sig_write_enable : STD_LOGIC;
     SIGNAL sp_out : STD_LOGIC_VECTOR (15 DOWNTO 0);
 
     -- Signal for EPC output
@@ -22,16 +21,15 @@ ARCHITECTURE Behavioral OF stack_wrapper IS
 
 BEGIN
 
-    sig_write_enable <= sp_write AND NOT(conditional_jumps OR ret_or_rti_from_EX OR ret_or_rti_from_MEM OR ret_or_rti_from_WB)
-        -- Instantiate the exception_detection_unit
-        STACK_POINTER : ENTITY work.stack_pointer
-            PORT MAP(
-                clk => clk, -- Clock signal
-                write_enable => sig_write_enable, --sp write
-                reset => reset, -- reset signal (active high)
-                data_in => mini_alu_out, -- Input data
-                data_out => sp_out -- Output data
-            );
+    -- Instantiate the exception_detection_unit
+    STACK_POINTER : ENTITY work.stack_pointer
+        PORT MAP(
+            clk => clk, -- Clock signal
+            write_enable => sp_write, --sp write
+            reset => reset, -- reset signal (active high)
+            data_in => mini_alu_out, -- Input data
+            data_out => sp_out -- Output data
+        );
 
     STACK_MINI_ALU : ENTITY work.stack_mini_alu
         PORT MAP(

@@ -97,8 +97,8 @@ BEGIN
 
     alu : ENTITY work.alu
         PORT MAP(
-            input_1 => data1_after_forward,
-            input_2 => data2_after_forward,
+            input_1 => data1,
+            input_2 => data2_before_forward,
             alu_control => alu_control,
             flags_enable_out => flags_enable_alu_out,
             result => alu_out,

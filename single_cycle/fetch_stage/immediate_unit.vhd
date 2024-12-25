@@ -8,12 +8,12 @@ ENTITY immediate_unit IS
         size : INTEGER := 16 -- Default size of the input/output signal
     );
     PORT (
-        output_0 : OUT STD_LOGIC_VECTOR(size - 1 DOWNTO 0); -- Output 0
-        output_1 : OUT STD_LOGIC_VECTOR(size - 1 DOWNTO 0); -- Output 1
-        instruction_with_immediate_output : OUT STD_LOGIC_VECTOR(size - 1 DOWNTO 0);
+        output_0 : OUT STD_LOGIC_VECTOR(15 DOWNTO 0); -- Output 0
+        output_1 : OUT STD_LOGIC_VECTOR(15 DOWNTO 0); -- Output 1
+        instruction_with_immediate_output : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
 
-        instruction_memory_result_input : IN STD_LOGIC_VECTOR(size - 1 DOWNTO 0);
-        instruction_with_immediate_input : IN STD_LOGIC_VECTOR(size - 1 DOWNTO 0);
+        instruction_memory_result_input : IN STD_LOGIC_VECTOR(15 DOWNTO 0);
+        instruction_with_immediate_input : IN STD_LOGIC_VECTOR(15 DOWNTO 0);
 
         reset : IN STD_LOGIC
 
@@ -30,7 +30,7 @@ BEGIN
             output_1 <= (OTHERS => '0');
             instruction_with_immediate_output <= (OTHERS => '0');
         ELSE
-            IF instruction_with_immediate_input = (OTHERS => '0') THEN
+            IF instruction_with_immediate_input = X"0000" THEN
                 -- idd 00100, ldm 01011, ldd 01100, std 01101
                 IF instruction_memory_result_input(15 DOWNTO 11) = "00100"
                     OR instruction_memory_result_input(15 DOWNTO 11) = "01011"

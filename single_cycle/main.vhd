@@ -20,17 +20,13 @@ END main;
 ARCHITECTURE Behavioral OF main IS
 
     -- outputs of IF
-    SIGNAL sig_instruction_from_IF : STD_LOGIC;
+    SIGNAL sig_instruction_from_IF : STD_LOGIC_VECTOR (15 DOWNTO 0);
     SIGNAL sig_pc_from_IF : STD_LOGIC_VECTOR (15 DOWNTO 0);
     SIGNAL sig_immediate_bits_from_IF : STD_LOGIC_VECTOR (15 DOWNTO 0);
     SIGNAL sig_r_src_1_from_IF : STD_LOGIC_VECTOR (2 DOWNTO 0);
     SIGNAL sig_r_src_2_from_IF : STD_LOGIC_VECTOR (2 DOWNTO 0);
     SIGNAL sig_r_dest_from_IF : STD_LOGIC_VECTOR (2 DOWNTO 0);
     SIGNAL sig_func_from_IF : STD_LOGIC_VECTOR (1 DOWNTO 0);
-
-    SIGNAL sig_conditional_jumps_from_EX : STD_LOGIC;
-    SIGNAL sig_conditional_jumps_from_EX : STD_LOGIC;
-    SIGNAL sig_conditional_jumps_from_EX : STD_LOGIC;
 
     -- outputs of ID
     SIGNAL sig_ret_from_ID : STD_LOGIC;
@@ -47,7 +43,7 @@ ARCHITECTURE Behavioral OF main IS
     SIGNAL sig_mem_write_from_ID : STD_LOGIC;
     SIGNAL sig_set_carry_from_ID : STD_LOGIC;
     SIGNAL sig_call_from_ID : STD_LOGIC;
-    SIGNAL sig_out_from_ID, sig_alu : STD_LOGIC;
+    SIGNAL sig_out_from_ID : STD_LOGIC;
     SIGNAL sig_in_from_ID : STD_LOGIC;
     SIGNAL sig_is_immediate_from_ID : STD_LOGIC;
     SIGNAL sig_jz_from_ID : STD_LOGIC;
@@ -67,14 +63,6 @@ ARCHITECTURE Behavioral OF main IS
     SIGNAL sig_reg_write_from_EX : STD_LOGIC;
     SIGNAL sig_alu_out_from_EX : STD_LOGIC_VECTOR (15 DOWNTO 0);
     SIGNAL sig_flags_from_EX : STD_LOGIC_VECTOR (2 DOWNTO 0);
-
-    SIGNAL sig_conditional_jumps_from_EX : STD_LOGIC;
-    SIGNAL sig_conditional_jumps_from_EX : STD_LOGIC;
-    SIGNAL sig_conditional_jumps_from_EX : STD_LOGIC;
-    SIGNAL sig_conditional_jumps_from_EX : STD_LOGIC;
-    SIGNAL sig_conditional_jumps_from_EX : STD_LOGIC;
-    SIGNAL sig_conditional_jumps_from_EX : STD_LOGIC;
-
     -- outputs of MEM
 
     SIGNAL sig_mem_out_from_MEM : STD_LOGIC_VECTOR (15 DOWNTO 0);
@@ -82,11 +70,6 @@ ARCHITECTURE Behavioral OF main IS
     SIGNAL sig_memory_address_from_MEM : STD_LOGIC_VECTOR (15 DOWNTO 0);
     SIGNAL sig_pc_from_MEM : STD_LOGIC_VECTOR (15 DOWNTO 0);
     SIGNAL sig_write_data_from_MEM : STD_LOGIC_VECTOR (15 DOWNTO 0);
-
-    SIGNAL sig_conditional_jumps_from_EX : STD_LOGIC;
-    SIGNAL sig_conditional_jumps_from_EX : STD_LOGIC;
-    SIGNAL sig_conditional_jumps_from_EX : STD_LOGIC;
-    SIGNAL sig_conditional_jumps_from_EX : STD_LOGIC;
 
     -- outputs of exception detection unit 
     SIGNAL sig_invalid_memory_exception : STD_LOGIC;
@@ -106,7 +89,7 @@ BEGIN
             conditional_jumps => sig_conditional_jumps_from_EX,
             ret_signal => sig_ret_from_ID,
             r_src1_from_excute => sig_read_data_1_from_ID,
-            mem_out => sig_mem_out_from_MEM(2 DOWNTO 0),
+            mem_out => sig_mem_out_from_MEM,
             freeze_signal => sig_freeze_from_ID,
             int_signal => sig_int_from_ID,
             rti_signal => sig_rti_from_ID,
@@ -126,7 +109,7 @@ BEGIN
         );
 
     EXCEPTION_WRAPPER : ENTITY work.exception_wrapper
-        PORT (
+        PORT MAP(
             clk => clk, -- Clock signal
             reset => reset, -- Reset signal (active high)
             stack_pointer_address => sig_sp_from_ID, -- Stack pointer address
@@ -139,7 +122,7 @@ BEGIN
         );
 
     STACK_WRAPPER : ENTITY work.stack_wrapper
-        PORT (
+        PORT MAP(
             clk => clk, -- Clock signal
             sp_write => sig_sp_write_from_ID, --sp write
             reset => reset, -- reset signal (active high)
@@ -175,7 +158,7 @@ BEGIN
             add_or_subtract_signal => sig_add_or_subtract_from_ID,
             freeze_signal => sig_freeze_from_ID,
             call_signal => sig_call_from_ID,
-            out_signal => sig_out_from_ID, sig_alu,
+            out_signal => sig_out_from_ID,
             in_signal => sig_in_from_ID,
             is_immediate_signal => sig_is_immediate_from_ID,
             jz_signal => sig_jz_from_ID,
@@ -209,7 +192,7 @@ BEGIN
         );
 
     EXECUTE_STAGE : ENTITY work.execute_stage
-        PORT (
+        PORT MAP(
             rst => reset, -- Reset signal
             clk => clk, -- Clock signal
             is_immediate => sig_is_immediate_from_ID, -- Immediate signal
@@ -247,6 +230,7 @@ BEGIN
     MEMORY_STAGE : ENTITY work.memory_stage
         PORT MAP(
             clk => clk,
+            reset => reset,
             sp_write_signal => sig_sp_write_from_ID,
             int_signal_from_meomery => sig_int_from_ID,
             call_signal => sig_call_from_ID,

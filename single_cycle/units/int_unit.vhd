@@ -16,13 +16,14 @@ END int_unit;
 
 ARCHITECTURE Behavioral OF int_unit IS
     SIGNAL sig_total_input : STD_LOGIC;
+    SIGNAL not_first_WRITE_MEM_DONE_input : STD_LOGIC;
 
 BEGIN
-
+    not_first_WRITE_MEM_DONE_input <= NOT(first_WRITE_MEM_DONE_input);
     instance_and_2_input_1_bit : ENTITY work.and_2_input_1_bit
         PORT MAP(
             input_0 => int_signal,
-            input_1 => NOT(first_WRITE_MEM_DONE_input),
+            input_1 => not_first_WRITE_MEM_DONE_input,
             result => sig_total_input
         );
 

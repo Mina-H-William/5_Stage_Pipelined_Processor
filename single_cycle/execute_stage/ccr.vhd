@@ -23,12 +23,14 @@ END ccr;
 ARCHITECTURE ccr_arch OF ccr IS
     SIGNAL flags : STD_LOGIC_VECTOR (2 DOWNTO 0); -- Flags
     SIGNAL sig_rti_total : STD_LOGIC;
+    SIGNAL not_write_flags_done : STD_LOGIC;
 BEGIN
 
+    not_write_flags_done <= NOT(write_flags_done);
     instance_of_and_2_input_1_bit : ENTITY work.and_2_input_1_bit
         PORT MAP(
             input_0 => rti_signal,
-            input_1 => NOT(write_flags_done),
+            input_1 => not_write_flags_done,
             result => sig_rti_total
         );
 
@@ -36,7 +38,6 @@ BEGIN
     BEGIN
         IF rst = '1' THEN
             flags <= (OTHERS => '0');
-            WRITE_FLAGS_DONE <= '0';
         ELSIF rising_edge(clk) THEN
             IF (sig_rti_total = '1') THEN
                 flags <= flags_in_rti;

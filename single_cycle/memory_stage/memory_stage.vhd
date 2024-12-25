@@ -5,6 +5,7 @@ USE IEEE.NUMERIC_STD.ALL;
 ENTITY memory_stage IS
     PORT (
         clk : IN STD_LOGIC;
+        reset : IN STD_LOGIC;
         sp_write_signal : IN STD_LOGIC;
         int_signal_from_meomery : IN STD_LOGIC;
         call_signal : IN STD_LOGIC;
@@ -17,7 +18,7 @@ ENTITY memory_stage IS
         sp : IN STD_LOGIC_VECTOR(15 DOWNTO 0);
         first_write_mem_done : IN STD_LOGIC;
 
-        data_out : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
+        data_out : OUT STD_LOGIC_VECTOR(15 DOWNTO 0)
 
     );
 END ENTITY memory_stage;
@@ -33,6 +34,8 @@ ARCHITECTURE memory_arch OF memory_stage IS
 
     SIGNAL memory_address : STD_LOGIC_VECTOR(15 DOWNTO 0);
     SIGNAL memory_data_in : STD_LOGIC_VECTOR(15 DOWNTO 0);
+
+    SIGNAL sig_first_and_int : STD_LOGIC;
 BEGIN
 
     expanded_flags <= (15 DOWNTO 3 => '0') & flags;
@@ -61,13 +64,14 @@ BEGIN
             result => mux01_input_0
         );
 
+    sig_first_and_int <= first_write_mem_done AND int_signal_from_meomery;
     -- Multiplexer for selecting data to write to memory
     mux01 : ENTITY work.mux_2_input
         GENERIC MAP(size => 16)
         PORT MAP(
             input_0 => mux01_input_0,
             input_1 => expanded_flags,
-            sel => first_write_mem_done AND int_signal_from_meomery,
+            sel => sig_first_and_int,
             result => memory_data_in
         );
 
@@ -79,6 +83,7 @@ BEGIN
         )
         PORT MAP(
             clk => clk,
+            reset => reset,
             we => mem_write_signal,
             re => mem_read_signal,
             address => memory_address,

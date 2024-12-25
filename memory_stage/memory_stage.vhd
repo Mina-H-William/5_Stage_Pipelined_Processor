@@ -19,6 +19,8 @@ ENTITY memory_stage IS
         sp : IN STD_LOGIC_VECTOR(15 DOWNTO 0);
         sp_write_back : IN STD_LOGIC_VECTOR(15 DOWNTO 0);
 
+        reset : IN STD_LOGIC;
+
         data_out : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
         memory_address_out : OUT STD_LOGIC_VECTOR(15 DOWNTO 0)
 
@@ -26,47 +28,6 @@ ENTITY memory_stage IS
 END ENTITY memory_stage;
 
 ARCHITECTURE memory_arch OF memory_stage IS
-    -- COMPONENT mux_4_input
-    --     GENERIC (
-    --         size : INTEGER
-    --     );
-    --     PORT (
-    --         input_0 : IN STD_LOGIC_VECTOR(size - 1 DOWNTO 0);
-    --         input_1 : IN STD_LOGIC_VECTOR(size - 1 DOWNTO 0);
-    --         input_2 : IN STD_LOGIC_VECTOR(size - 1 DOWNTO 0);
-    --         input_3 : IN STD_LOGIC_VECTOR(size - 1 DOWNTO 0);
-    --         sel : IN STD_LOGIC_VECTOR(1 DOWNTO 0);
-    --         result : OUT STD_LOGIC_VECTOR(size - 1 DOWNTO 0)
-    --     );
-    -- END COMPONENT;
-
-    -- COMPONENT mux_2_input
-    --     GENERIC (
-    --         size : INTEGER
-    --     );
-    --     PORT (
-    --         input_0 : IN STD_LOGIC_VECTOR(size - 1 DOWNTO 0);
-    --         input_1 : IN STD_LOGIC_VECTOR(size - 1 DOWNTO 0);
-    --         sel : IN STD_LOGIC;
-    --         result : OUT STD_LOGIC_VECTOR(size - 1 DOWNTO 0)
-    --     );
-    -- END COMPONENT;
-
-    -- COMPONENT ram
-    --     GENERIC (
-    --         DATA_WIDTH : INTEGER;
-    --         ADDRESS_WIDTH : INTEGER
-    --     );
-    --     PORT (
-    --         clk : IN STD_LOGIC;
-    --         we : IN STD_LOGIC;
-    --         re : IN STD_LOGIC;
-    --         address : IN STD_LOGIC_VECTOR(ADDRESS_WIDTH - 1 DOWNTO 0);
-    --         data_in : IN STD_LOGIC_VECTOR(DATA_WIDTH - 1 DOWNTO 0);
-    --         data_out : OUT STD_LOGIC_VECTOR(DATA_WIDTH - 1 DOWNTO 0)
-    --     );
-    -- END COMPONENT;
-
     -- Internal signals
     SIGNAL pc_incremented : STD_LOGIC_VECTOR(15 DOWNTO 0);
     SIGNAL sp_decremented : STD_LOGIC_VECTOR(15 DOWNTO 0);
@@ -141,6 +102,7 @@ BEGIN
             clk => clk,
             we => memory_we,
             re => memory_re,
+            reset => reset,
             address => memory_address,
             data_in => memory_data_in,
             data_out => data_out

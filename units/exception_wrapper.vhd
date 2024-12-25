@@ -10,6 +10,7 @@ ENTITY exception_wrapper IS
         pc_from_decode : IN STD_LOGIC_VECTOR (15 DOWNTO 0); -- Program counter from decode stage
         pc_from_mem : IN STD_LOGIC_VECTOR (15 DOWNTO 0); -- Program counter from memory stage
         data_out : OUT STD_LOGIC_VECTOR (15 DOWNTO 0); -- EPC output
+        write_enable : IN STD_LOGIC; -- Write enable signal for stack pointer
         empty_stack_exception : OUT STD_LOGIC; -- Empty Stack Exception
         invalid_memory_exception : OUT STD_LOGIC -- Invalid Memory Address Exception
     );
@@ -30,6 +31,7 @@ BEGIN
             stack_pointer_address => stack_pointer_address,
             memory_address => memory_address,
             empty_stack_exception => stack_exc,
+            write_enable => write_enable,
             invalid_memory_exception => mem_exc
         );
 

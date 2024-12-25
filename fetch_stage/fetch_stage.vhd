@@ -51,87 +51,6 @@ ARCHITECTURE Behavioral OF fetch_stage IS
 
     SIGNAL pc_input_signal : STD_LOGIC_VECTOR (15 DOWNTO 0);
     ----------------------------------------------------------------------------------------------------------------------
-    -- -- Component declaration for pc_unit
-    -- COMPONENT pc_unit
-    --     PORT (
-    --         same_pc_write_disable : IN STD_LOGIC;
-    --         freeze_signal : IN STD_LOGIC;
-    --         int_signal : IN STD_LOGIC;
-    --         invalid_memory : IN STD_LOGIC;
-    --         empty_stack : IN STD_LOGIC;
-    --         reset : IN STD_LOGIC;
-    --         index_bit : IN STD_LOGIC;
-    --         result_of_pc_unit : OUT STD_LOGIC_VECTOR (2 DOWNTO 0)
-    --     );
-    -- END COMPONENT;
-
-    -- -- Component Declaration
-    -- COMPONENT memory_entity
-    --     PORT (
-    --         clk : IN STD_LOGIC;
-    --         reset : IN STD_LOGIC;
-    --         address : IN STD_LOGIC_VECTOR (11 DOWNTO 0);
-    --         write_data : IN STD_LOGIC_VECTOR (15 DOWNTO 0);
-    --         read_data : OUT STD_LOGIC_VECTOR (15 DOWNTO 0);
-    --         write_en : IN STD_LOGIC
-    --     );
-    -- END COMPONENT;
-
-    -- -- Component declaration for pipeline_register (used as program counter register)
-    -- COMPONENT pipeline_register
-    --     GENERIC (
-    --         WIDTH : INTEGER := 32 -- Set width to 32 bits for the program counter
-    --     );
-    --     PORT (
-    --         clk : IN STD_LOGIC;
-    --         flush : IN STD_LOGIC;
-    --         data_in : IN STD_LOGIC_VECTOR (WIDTH - 1 DOWNTO 0);
-    --         data_out : OUT STD_LOGIC_VECTOR (WIDTH - 1 DOWNTO 0)
-    --     );
-    -- END COMPONENT;
-
-    -- COMPONENT mux_2_input
-    --     GENERIC (
-    --         size : INTEGER := 8 -- Size of each input (bit-width)
-    --     );
-    --     PORT (
-    --         input_0 : IN STD_LOGIC_VECTOR (size - 1 DOWNTO 0); -- First input
-    --         input_1 : IN STD_LOGIC_VECTOR (size - 1 DOWNTO 0); -- Second input
-    --         sel : IN STD_LOGIC; -- Selection signal (0 or 1)
-    --         result : OUT STD_LOGIC_VECTOR (size - 1 DOWNTO 0) -- Output
-    --     );
-    -- END COMPONENT;
-
-    -- -- Instantiate the add_one component to increment the Program Counter (PC)
-    -- COMPONENT add_one
-    --     GENERIC (
-    --         width => 16 -- Assuming 16-bit width for the PC
-    --     );
-    --     PORT (
-    --         input : IN STD_LOGIC_VECTOR(15 DOWNTO 0); -- Input PC value
-    --         output : OUT STD_LOGIC_VECTOR(15 DOWNTO 0) -- Output (incremented PC)
-    --     );
-    -- END COMPONENT;
-
-    -- -- Component declaration for mux_8_input
-    -- COMPONENT mux_8_input
-    --     GENERIC (
-    --         size : INTEGER := 16 -- Width of the inputs
-    --     );
-    --     PORT (
-    --         input_0 : IN STD_LOGIC_VECTOR(size - 1 DOWNTO 0);
-    --         input_1 : IN STD_LOGIC_VECTOR(size - 1 DOWNTO 0);
-    --         input_2 : IN STD_LOGIC_VECTOR(size - 1 DOWNTO 0);
-    --         input_3 : IN STD_LOGIC_VECTOR(size - 1 DOWNTO 0);
-    --         input_4 : IN STD_LOGIC_VECTOR(size - 1 DOWNTO 0);
-    --         input_5 : IN STD_LOGIC_VECTOR(size - 1 DOWNTO 0);
-    --         input_6 : IN STD_LOGIC_VECTOR(size - 1 DOWNTO 0);
-    --         input_7 : IN STD_LOGIC_VECTOR(size - 1 DOWNTO 0);
-    --         sel : IN STD_LOGIC_VECTOR(2 DOWNTO 0); -- Selection signal
-    --         result : OUT STD_LOGIC_VECTOR(size - 1 DOWNTO 0) -- Selected output
-    --     );
-    -- END COMPONENT;
-
     ----------------------------------------------------------------------------------------------------------------------------
 BEGIN
 
@@ -171,6 +90,7 @@ BEGIN
         PORT MAP(
             clk => clk, -- Connect the clock signal
             flush => '0', -- as the one who controlling here is the mux before it
+            reset => '0', -- Connect the reset signal
             data_in => pc_input_signal, -- Connect the new PC value input 
             data_out => pc_read_data_signal -- Connect the output to the current PC value
         );

@@ -9,6 +9,7 @@ ENTITY pipeline_register IS
     );
     PORT (
         clk : IN STD_LOGIC; -- Clock signal
+        reset : IN STD_LOGIC; -- reset signal (active high)
         flush : IN STD_LOGIC; -- flush signal (active high)
         data_in : IN STD_LOGIC_VECTOR (WIDTH - 1 DOWNTO 0); -- Input data
         data_out : OUT STD_LOGIC_VECTOR (WIDTH - 1 DOWNTO 0) -- Output data
@@ -20,14 +21,19 @@ END pipeline_register;
 ARCHITECTURE Behavioral OF pipeline_register IS
     SIGNAL register_value : STD_LOGIC_VECTOR (WIDTH - 1 DOWNTO 0);
 BEGIN
-    PROCESS (clk)
+    PROCESS (clk, reset)
     BEGIN
-        IF flush = '1' THEN
+
+        IF reset = '1' THEN
             -- Reset the register value
             register_value <= (OTHERS => '0');
         ELSIF rising_edge(clk) THEN
-            -- Update the register value on the clock edge if enabled
-            register_value <= data_in;
+            IF flush = '1' THEN
+                register_value <= (OTHERS => '0');
+            ELSE
+                -- Update the register value on the clock edge if enabled
+                register_value <= data_in;
+            END IF;
         END IF;
     END PROCESS;
 

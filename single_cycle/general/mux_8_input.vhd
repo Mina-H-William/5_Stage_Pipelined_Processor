@@ -4,7 +4,7 @@ USE IEEE.STD_LOGIC_1164.ALL;
 --input_(num not needed when call) => (others => '0'),  -- Tie to a constant value
 ENTITY mux_8_input IS
     GENERIC (
-        size : INTEGER := 8 -- Size of each input (bit-width)
+        size : INTEGER := 16 -- Size of each input (bit-width)
     );
     PORT (
         input_0 : IN STD_LOGIC_VECTOR (size - 1 DOWNTO 0); -- First input

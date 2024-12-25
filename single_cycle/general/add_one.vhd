@@ -5,7 +5,7 @@ USE IEEE.NUMERIC_STD.ALL; -- Use numeric_std for unsigned arithmetic
 
 ENTITY add_one IS
     GENERIC (
-        width : INTEGER := 8 -- Width of the input and output
+        width : INTEGER := 16 -- Width of the input and output
     );
     PORT (
         input : IN STD_LOGIC_VECTOR (width - 1 DOWNTO 0); -- Input

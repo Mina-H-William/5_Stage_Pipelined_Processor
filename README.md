@@ -1,4 +1,4 @@
-# Pipelined-intel-core I26
+# Pipelined-intel-core-I26
 This is a simple pipelined processor that serves as the project for the Computer Architecture course (CMP 3010) taught at Cairo University.
 
 ## Implemented Instructions

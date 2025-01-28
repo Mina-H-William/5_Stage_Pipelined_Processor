@@ -1,7 +1,9 @@
-#include<bits/stdc++.h>
+#include <bits/stdc++.h>
 
 using namespace std;
-unordered_map<string, pair<string,string>> instructionSet = {
+
+// Instruction set mapping to opcode and function code
+unordered_map<string, pair<string, string>> instructionSet = {
         {"NOP",    {"00000", "00"}},
         {"HLT",    {"00001", "00"}},
         {"SETC",   {"00010", "00"}},
@@ -30,15 +32,65 @@ unordered_map<string, pair<string,string>> instructionSet = {
         {"RESET",  {"11111", "00"}}
 };
 
-unordered_map<string ,int>needsTwoLocations= {
-        {"IADD",3},
-        {"LDM",2},
-        {"LDD",3},
-        {"STD",3},
+
+
+unordered_map<string, bool> oneOperand = {
+        {"CALL", true},
+        {"JC", true},
+        {"JMP", true},
+        {"JN",true},
+        {"JZ",true},
+        {"PUSH",true}
 };
 
+
+// Instructions that need two locations (operands)
+unordered_map<string, int> needsTwoLocations = {
+        {"IADD", 3},
+        {"LDM", 2},
+        {"LDD", 3},
+        {"STD", 3},
+};
+
+// Check if string is a valid number (integer)
+bool isNumber(const string& str) {
+    try {
+        std::stoi(str);  // Try converting to integer
+        return true;
+    } catch (const std::invalid_argument&) {
+        return false;  // Not a valid integer
+    } catch (const std::out_of_range&) {
+        return false;  // Number out of range
+    }
+}
+
+bool isORG(const string& line, int & index) {
+
+    istringstream iss(line);
+    string instruction, token;
+    vector<string> tokens;
+
+    while (iss >> token) {
+        tokens.push_back(token);
+    }
+
+    if (tokens[0] == "#") {
+        return false;  // Skip comments
+    }
+
+
+    if (tokens[0] == ".ORG") {
+        int loc = stoi(tokens[1], nullptr, 16);
+        index = loc;
+        return true;
+    }
+
+    return false;
+}
+
+// Parse register and convert it to binary
 string parseRegister(const string& reg) {
-    if (reg[0] != '$' || !isdigit(reg[1])) {
+    if (reg[0] != 'R' || !isdigit(reg[1])) {
         return bitset<3>(0).to_string();
     }
     int regNum = stoi(reg.substr(1));
@@ -49,7 +101,8 @@ string parseRegister(const string& reg) {
 }
 
 
-vector<string> assembleInstruction(const string& line) {
+// Assemble the instruction based on tokens
+void assembleInstruction(const string& line, vector<string>& mem, int &index) {
     istringstream iss(line);
     string instruction, token;
     vector<string> tokens;
@@ -58,56 +111,84 @@ vector<string> assembleInstruction(const string& line) {
         tokens.push_back(token);
     }
 
-    if (tokens.empty()) {
-        throw invalid_argument("Empty instruction line");
+    if (tokens.empty() || tokens[0] == "#") {
+        return;  // Empty line or comment
+    }
+    if (isNumber(tokens[0])) {
+        int loc = stoi(tokens[0], nullptr, 16);
+        bitset<16> binary(loc);
+        mem[index] = binary.to_string();
+        index++;
+        return;
     }
 
-    // seprate the offset from the register
-    if(tokens.size() > 2){
+    if (tokens.size() > 2) {
         string str = tokens[2];
-        if(str.find('(') != -1){
-            string offset = str.substr(0,str.find('('));
-            tokens[2] = str.substr(str.find('(')+1,2);
-            tokens.push_back(offset);
-            cout<<offset<<" "<<tokens[2]<<"\n";
-
+        if (str.find('(') != string::npos) {
+            string offset = str.substr(0, str.find('('));
+            tokens[2] = str.substr(str.find('(') + 1, 2);
+            if(tokens.size()>=3){
+                tokens[3] = offset;
+            }else {
+                tokens.push_back(offset);
+            }
         }
     }
 
+
+
     string opcode = instructionSet[tokens[0]].first;
-    string bits10_8 = "000",bits7_5 = "000",bits4_2 = "000" ;
+    string bits10_8 = "000", bits7_5 = "000", bits4_2 = "000";
     string func = instructionSet[tokens[0]].second;
 
-
-    if(tokens.size() > 1){
+    // Parse registers if they exist
+    if (tokens.size() > 1) {
         bits10_8 = parseRegister(tokens[1]);
     }
-    if(tokens.size() > 2){
+    if (tokens.size() > 2) {
         bits7_5 = parseRegister(tokens[2]);
     }
-    if(tokens.size()>3){
+    if (tokens.size() > 3) {
         bits4_2 = parseRegister(tokens[3]);
     }
 
-    if(tokens[0] == "POP" || tokens[0] == "LDM" || tokens[0] == "IN"){
-        bits7_5 = parseRegister(tokens[1]);
-    }else if(tokens[0] == "OUT"){
-        bits4_2 = parseRegister(tokens[1]);
+    if(!oneOperand[tokens[0]]) {
+        string temp = bits10_8;
+        bits10_8 = bits7_5;
+        bits7_5 = temp;
     }
 
-    instruction = opcode + bits10_8 + bits7_5 + bits4_2 + func;
-    vector<string>assembled = {instruction};
-    if(needsTwoLocations[tokens[0]]){
-        string imm = bitset<16>(stoi(tokens[needsTwoLocations[tokens[0]]])).to_string();
+
+    // Handle specific instructions (e.g., POP, LDM, IN)
+    if (tokens[0] == "POP" || tokens[0] == "LDM" || tokens[0] == "IN") {
+        bits7_5 = parseRegister(tokens[1]);
+    } else if (tokens[0] == "OUT") {
+        bits10_8 = parseRegister(tokens[1]);
+    }else if(tokens[0] == "STD"){
+        bits10_8 = parseRegister(tokens[1]);
+        bits4_2 = parseRegister(tokens[2]);
+    }
+
+    // Create the assembled instruction
+    string instructionBinary = opcode + bits10_8 + bits7_5 + bits4_2 + func;
+    vector<string> assembled = {instructionBinary};
+
+    // Handle instructions that require two operands
+    if (needsTwoLocations[tokens[0]]) {
+        int x = stoi(tokens[needsTwoLocations[tokens[0]]],nullptr,16);
+        string imm = bitset<16>(x).to_string();
         assembled.push_back(imm);
     }
-    return assembled;
 
+    // Store the assembled instructions in memory
+    for (auto& str : assembled) {
+        mem[index] = str;
+        index++;
+    }
 }
 
 
-
-
+// Assemble the entire file
 void assembleFile(const string& inputFile, const string& outputFile) {
     const int maxMemorySize = 65535;
     const string nop = "0000000000000000";
@@ -119,35 +200,17 @@ void assembleFile(const string& inputFile, const string& outputFile) {
     }
 
     string line;
-    int instructionCount = 0;
+    int index = 0;
 
-    while(instructionCount <= 8){
-        cout<<"please enter a 16 bit string for the IM["<<instructionCount<<"]:\n";
-        string im ;
-        cin >> im ;
-        if(im.length() != 16 ){
-            throw invalid_argument("the string must conatin 16 digit");
-        }
-        for(auto digit: im){
-            if(digit != '0' && digit != '1'){
-                throw invalid_argument("the string must be binary");
-            }
-        }
-        outfile << im << endl;
-        instructionCount++;
-    }
+    vector<string> memo(maxMemorySize, nop);
 
-    while(instructionCount < 20){
-        outfile << nop << endl;
-        instructionCount++;
-    }
     while (getline(infile, line)) {
         if (!line.empty()) {
             try {
-                vector<string> binaryLines = assembleInstruction(line);
-                for (const auto& binaryLine : binaryLines) {
-                    outfile << binaryLine << endl;
-                    instructionCount++;
+                if (isORG(line, index)) {
+                    continue;
+                }else{
+                    assembleInstruction(line,memo,index);
                 }
             } catch (const exception& e) {
                 cerr << "Error: " << e.what() << endl;
@@ -155,14 +218,16 @@ void assembleFile(const string& inputFile, const string& outputFile) {
         }
     }
 
-    for (int i = instructionCount; i < maxMemorySize; i++) {
-        outfile << nop << endl;
+    // Output the assembled instructions to the file
+    for (auto str : memo) {
+        outfile << str << endl;
     }
 }
 
+// Main entry point
 int main() {
     try {
-        assembleFile("input.txt", "output.txt");
+        assembleFile(".\\input.txt", ".\\output.txt");
         cout << "Assembly completed successfully." << endl;
     } catch (const exception& e) {
         cerr << "Error: " << e.what() << endl;

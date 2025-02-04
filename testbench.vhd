@@ -84,7 +84,7 @@ BEGIN
         -- input_port <= X"0006";
         -- WAIT FOR 400 ns;
         -- test3
-        input_port <= X"0006";
+        input_port <= X"00F5";
         WAIT FOR 400 ns;
 
         -- Test 2: Modify input data

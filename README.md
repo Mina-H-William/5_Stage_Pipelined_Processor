@@ -47,12 +47,12 @@ RTI
 ## Single Cycle Processor 🖥️
 
 ![Single Cycle Processor](https://github.com/Mina-H-William/Pipelined-intel-core-I26/blob/main/designs/SingleCycle_design.jpg?raw=true)
-[View High-Quality Image 📸](https://miro.com/app/board/uXjVL8SgfTs=/)
+[View High-Quality Image 📸](https://miro.com/app/board/uXjVL0KtqO8=/)
 
 ## Pipelined Processor 🔄
 
 ![Pipelined Processor](https://raw.githubusercontent.com/Mina-H-William/Pipelined-intel-core-I26/refs/heads/main/designs/Pipeline_design.jpg)
-[View High-Quality Image 📸](https://miro.com/app/board/uXjVL0KtqO8=/)
+[View High-Quality Image 📸](https://miro.com/app/board/uXjVL8SgfTs=/)
 
 
 ## Contributors

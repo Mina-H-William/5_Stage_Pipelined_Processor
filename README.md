@@ -89,3 +89,5 @@ RTI
     </td></tr>
 </table>
 <!-- readme: collaborators -end -->
+
+for any more details about the project please refer to the [project document](https://github.com/Mina-H-William/Pipelined-intel-core-I26/blob/main/Architecture_Project_F24.pdf)

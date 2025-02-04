@@ -30,7 +30,7 @@ ARCHITECTURE Behavioral OF demux_unit IS
 BEGIN
     mux_inst_1 : ENTITY work.mux_2_input
         GENERIC MAP(
-            size => 1
+            size => 16
         )
         PORT MAP(
             input_0 => instruction_memory_result_input, -- incremented PC value as input_0

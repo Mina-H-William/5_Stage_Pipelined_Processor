@@ -5,11 +5,11 @@ USE IEEE.NUMERIC_STD.ALL; -- Use numeric_std for unsigned arithmetic
 
 ENTITY add_one IS
     GENERIC (
-        width : INTEGER := 8 -- Width of the input and output
+        size : INTEGER := 16 -- Width of the input and output
     );
     PORT (
-        input : IN STD_LOGIC_VECTOR (width - 1 DOWNTO 0); -- Input
-        output : OUT STD_LOGIC_VECTOR (width - 1 DOWNTO 0) -- Output
+        input : IN STD_LOGIC_VECTOR (size - 1 DOWNTO 0); -- Input
+        output : OUT STD_LOGIC_VECTOR (size - 1 DOWNTO 0) -- Output
     );
 END add_one;
 

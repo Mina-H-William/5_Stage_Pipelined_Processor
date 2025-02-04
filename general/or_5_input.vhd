@@ -6,7 +6,7 @@ USE ieee.std_logic_unsigned.ALL;
 
 ENTITY or_5_input IS
     GENERIC (
-        size : INTEGER := 1 -- Size of each input (bit-width)
+        size : INTEGER := 16 -- Size of each input (bit-width)
     );
     PORT (
         input_0 : IN STD_LOGIC_VECTOR (size - 1 DOWNTO 0); -- First input

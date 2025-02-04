@@ -5,6 +5,7 @@ USE IEEE.NUMERIC_STD.ALL;
 ENTITY main IS
     PORT (
         reset : IN STD_LOGIC;
+        memory_reset : IN STD_LOGIC;
         clk : IN STD_LOGIC;
         memory_clk : IN STD_LOGIC;
         input_port : IN STD_LOGIC_VECTOR(15 DOWNTO 0);
@@ -12,7 +13,11 @@ ENTITY main IS
         epc : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
         ccr : OUT STD_LOGIC_VECTOR(2 DOWNTO 0);
         stack_pointer : OUT STD_LOGIC_VECTOR (15 DOWNTO 0);
-        pc : OUT STD_LOGIC_VECTOR (15 DOWNTO 0)
+        pc : OUT STD_LOGIC_VECTOR (15 DOWNTO 0);
+        instruction : OUT STD_LOGIC_VECTOR (15 DOWNTO 0);
+        immediate : OUT STD_LOGIC_VECTOR (15 DOWNTO 0);
+        rsrc1 : OUT STD_LOGIC_VECTOR (15 DOWNTO 0);
+        rsrc2 : OUT STD_LOGIC_VECTOR (15 DOWNTO 0)
     );
 END main;
 
@@ -181,6 +186,174 @@ ARCHITECTURE Behavioral OF main IS
     SIGNAL sig_int_or_rti_from_ID : STD_LOGIC;
 
 BEGIN
+
+    -- PROCESS (reset)
+    -- BEGIN
+    --     IF reset = '1' THEN
+    --         -- Outputs of fetch
+    --         sig_pc_from_fetch <= (OTHERS => '0');
+    --         sig_instruction_from_IF <= (OTHERS => '0');
+    --         sig_immediate_bits_from_IF <= (OTHERS => '0');
+
+    --         -- Outputs of decode
+    --         sig_ret_or_rti_from_ID <= '0';
+    --         sig_reg_write_from_ID <= '0';
+    --         sig_jmp_from_ID <= '0';
+    --         sig_mem_to_reg_from_ID <= '0';
+    --         sig_mem_read_from_ID <= '0';
+    --         sig_mem_write_from_ID <= '0';
+    --         sig_int_from_ID <= '0';
+    --         sig_set_carry_from_ID <= '0';
+    --         sig_rti_from_ID <= '0';
+    --         sig_sp_write_from_ID <= '0';
+    --         sig_add_or_subtract_from_ID <= '0';
+    --         sig_freeze_from_ID <= '0';
+    --         sig_call_from_ID <= '0';
+    --         sig_out_from_ID <= '0';
+    --         sig_in_from_ID <= '0';
+    --         sig_is_immediate_from_ID <= '0';
+    --         sig_jz_from_ID <= '0';
+    --         sig_jc_from_ID <= '0';
+    --         sig_jn_from_ID <= '0';
+    --         sig_pass_data_2_from_ID <= '0';
+    --         sig_pass_data_1_from_ID <= '0';
+    --         sig_not_from_ID <= '0';
+    --         sig_add_offset_from_ID <= '0';
+    --         sig_alu_func_from_ID <= '0';
+    --         sig_read_data_1_from_ID <= (OTHERS => '0');
+    --         sig_read_data_2_from_ID <= (OTHERS => '0');
+
+    --         -- Outputs of execute
+    --         sig_conditional_jumps_from_EX <= '0';
+    --         ret_or_rti_from_EX <= '0';
+    --         sig_flags_from_EX <= (OTHERS => '0');
+    --         sig_alu_out_from_EX <= (OTHERS => '0');
+    --         sig_r_src_1_data_from_EX <= (OTHERS => '0');
+
+    --         -- Outputs of memory
+    --         ret_or_rti_from_MEM <= '0';
+    --         sig_data_forward_from_MEM <= (OTHERS => '0');
+    --         sig_memory_address_from_MEM <= (OTHERS => '0');
+    --         sig_memory_out_from_MEM <= (OTHERS => '0');
+
+    --         -- Outputs of write back
+    --         sig_write_data_from_WB <= (OTHERS => '0');
+
+    --         -- Outputs of stack wrapper
+    --         sp_from_ID <= (OTHERS => '0');
+
+    --         -- Outputs of exception
+    --         sig_invalid_memory_exception <= '0';
+    --         sig_empty_stack_exception <= '0';
+
+    --         -- Outputs of load use
+    --         sig_same_pc_write_disable <= '0';
+
+    --         -- Outputs of flush detection
+    --         sig_flush_detection_IF_ID <= '0';
+    --         sig_flush_detection_ID_EX <= '0';
+    --         sig_flush_detection_EX_MEM <= '0';
+    --         sig_flush_detection_MEM_WB <= '0';
+
+    --         -- Outputs of forward units
+    --         sig_forward1 <= (OTHERS => '0');
+    --         sig_forward2 <= (OTHERS => '0');
+
+    --         -- Flushes
+    --         sig_flush_ID_EX <= '0';
+    --         sig_flush_EX_MEM <= '0';
+    --         sig_flush_MEM_WB <= '0';
+
+    --         -- IF_ID register inputs
+    --         sig_IF_ID_inputs <= (OTHERS => '0');
+
+    --         -- ID_EX register inputs
+    --         sig_ID_EX_inputs <= (OTHERS => '0');
+
+    --         -- EX_MEM register inputs
+    --         sig_EX_MEM_inputs <= (OTHERS => '0');
+
+    --         -- MEM_WB register inputs
+    --         sig_MEM_WB_inputs <= (OTHERS => '0');
+
+    --         -- IF_ID register outputs
+    --         sig_IF_ID_outputs <= (OTHERS => '0');
+    --         sig_pc_from_ID <= (OTHERS => '0');
+    --         sig_instruction_from_ID <= (OTHERS => '0');
+    --         sig_immediate_bits_from_ID <= (OTHERS => '0');
+    --         sig_r_src_1_from_ID <= (OTHERS => '0');
+    --         sig_r_src_2_from_ID <= (OTHERS => '0');
+    --         sig_r_dest_from_ID <= (OTHERS => '0');
+    --         sig_func_from_ID <= (OTHERS => '0');
+
+    --         -- ID_EX register outputs
+    --         sig_ID_EX_outputs <= (OTHERS => '0');
+    --         sig_ret_or_rti_from_EX <= '0';
+    --         sig_reg_write_from_EX <= '0';
+    --         sig_jmp_from_EX <= '0';
+    --         sig_mem_to_reg_from_EX <= '0';
+    --         sig_mem_read_from_EX <= '0';
+    --         sig_mem_write_from_EX <= '0';
+    --         sig_int_from_EX <= '0';
+    --         sig_set_carry_from_EX <= '0';
+    --         sig_rti_from_EX <= '0';
+    --         sig_sp_write_from_EX <= '0';
+    --         sig_call_from_EX <= '0';
+    --         sig_out_from_EX <= '0';
+    --         sig_in_from_EX <= '0';
+    --         sig_is_immediate_from_EX <= '0';
+    --         sig_pc_from_EX <= (OTHERS => '0');
+    --         sig_jz_from_EX <= '0';
+    --         sig_jc_from_EX <= '0';
+    --         sig_jn_from_EX <= '0';
+    --         sig_read_data_1_from_EX <= (OTHERS => '0');
+    --         sig_read_data_2_from_EX <= (OTHERS => '0');
+    --         sig_input_port_from_EX <= (OTHERS => '0');
+    --         sig_r_src_1_address_from_EX <= (OTHERS => '0');
+    --         sig_r_src_2_address_from_EX <= (OTHERS => '0');
+    --         sig_pass_data_2_from_EX <= '0';
+    --         sig_pass_data_1_from_EX <= '0';
+    --         sig_not_from_EX <= '0';
+    --         sig_add_offset_from_EX <= '0';
+    --         sig_r_dest_from_EX <= (OTHERS => '0');
+    --         sig_alu_func_from_EX <= '0';
+    --         sig_func_from_EX <= (OTHERS => '0');
+    --         sig_sp_from_EX <= (OTHERS => '0');
+
+    --         -- EX_MEM register outputs
+    --         sig_EX_MEM_outputs <= (OTHERS => '0');
+    --         sig_pc_from_MEM <= (OTHERS => '0');
+    --         sig_r_dest_from_MEM <= (OTHERS => '0');
+    --         sig_ret_or_rti_from_MEM <= '0';
+    --         sig_reg_write_from_MEM <= '0';
+    --         sig_mem_to_reg_from_MEM <= '0';
+    --         sig_mem_read_from_MEM <= '0';
+    --         sig_mem_write_from_MEM <= '0';
+    --         sig_int_from_MEM <= '0';
+    --         sig_rti_from_MEM <= '0';
+    --         sig_sp_write_from_MEM <= '0';
+    --         sig_call_from_MEM <= '0';
+    --         sig_alu_out_from_MEM <= (OTHERS => '0');
+    --         sig_read_data_2_from_MEM <= (OTHERS => '0');
+    --         sig_flags_to_MEM <= (OTHERS => '0');
+    --         sig_sp_from_MEM <= (OTHERS => '0');
+
+    --         -- MEM_WB register outputs
+    --         sig_MEM_WB_outputs <= (OTHERS => '0');
+    --         sig_ret_or_rti_from_WB <= '0';
+    --         sig_reg_write_from_WB <= '0';
+    --         sig_r_dest_from_WB <= (OTHERS => '0');
+    --         sig_int_from_WB <= '0';
+    --         sig_rti_from_WB <= '0';
+    --         sig_sp_from_WB <= (OTHERS => '0');
+    --         sig_mem_to_reg_from_WB <= '0';
+    --         sig_memory_out_from_WB <= (OTHERS => '0');
+    --         sig_alu_out_from_WB <= (OTHERS => '0');
+
+    --         -- Intermediate
+    --         sig_int_or_rti_from_ID <= '0';
+    --     END IF;
+    -- END PROCESS;
     FETCH_STAGE : ENTITY work.fetch_stage
         PORT MAP(
             conditional_jumps => sig_conditional_jumps_from_EX,
@@ -196,7 +369,7 @@ BEGIN
             index_bit => sig_instruction_from_ID(1),
             memory_clk => memory_clk,
             clk => clk,
-            memory_reset => reset,
+            memory_reset => memory_reset,
             freeze_instruction => sig_instruction_from_ID,
             is_immediate => sig_is_immediate_from_ID,
 
@@ -205,10 +378,15 @@ BEGIN
             immediate_bits_output => sig_immediate_bits_from_IF
         );
 
+    pc <= sig_pc_from_fetch;
+    instruction <= sig_instruction_from_IF;
+    immediate <= sig_immediate_bits_from_IF;
+
     sig_IF_ID_inputs <= sig_pc_from_fetch & sig_instruction_from_IF & sig_immediate_bits_from_IF;
 
     FORWARD_UNIT : ENTITY work.forward_unit
         PORT MAP(
+            reset => reset, -- Reset signal (active high)
             rsrc1_execute => sig_r_src_1_address_from_EX, -- Source 1 execute
             rsrc2_execute => sig_r_src_2_address_from_EX, -- Source 2 execute
             rdest_mem => sig_r_dest_from_MEM, -- Destination memory
@@ -244,6 +422,7 @@ BEGIN
             pc_from_decode => sig_pc_from_ID, -- Program counter from decode stage
             pc_from_mem => sig_pc_from_MEM, -- Program counter from memory stage
             data_out => epc, -- EPC output
+            write_enable => sig_mem_write_from_MEM, -- Memory write enable
             empty_stack_exception => sig_empty_stack_exception, -- Empty Stack Exception
             invalid_memory_exception => sig_invalid_memory_exception-- Invalid Memory Address Exception
         );
@@ -264,6 +443,7 @@ BEGIN
         )
         PORT MAP(
             clk => clk,
+            reset => reset,
             flush => sig_flush_detection_IF_ID,
             data_in => sig_IF_ID_inputs,
             data_out => sig_IF_ID_outputs
@@ -293,6 +473,8 @@ BEGIN
             int_or_rti => sig_int_or_rti_from_ID,
             data_out => sp_from_ID
         );
+
+    stack_pointer <= sp_from_ID;
 
     DECODE_STAGE : ENTITY work.decode_stage
         PORT MAP(
@@ -331,6 +513,8 @@ BEGIN
             read_data_1 => sig_read_data_1_from_ID,
             read_data_2 => sig_read_data_2_from_ID
         );
+    rsrc1 <= sig_read_data_1_from_ID;
+    rsrc2 <= sig_read_data_2_from_ID;
 
     sig_ID_EX_inputs <=
         sig_ret_or_rti_from_ID & sig_reg_write_from_ID & sig_jmp_from_ID & sig_mem_to_reg_from_ID -- 1 bits
@@ -364,6 +548,7 @@ BEGIN
         )
         PORT MAP(
             clk => clk,
+            reset => reset,
             flush => sig_flush_ID_EX,
             data_in => sig_ID_EX_inputs,
             data_out => sig_ID_EX_outputs
@@ -441,6 +626,8 @@ BEGIN
             flags_out => sig_flags_from_EX-- Flags out
         );
 
+    ccr <= sig_flags_from_EX;
+
     sig_EX_MEM_inputs <= sig_ret_or_rti_from_EX & sig_reg_write_from_EX & sig_mem_to_reg_from_EX & sig_mem_read_from_EX -- 1 bits
         & sig_mem_write_from_EX & sig_int_from_EX & sig_rti_from_EX & sig_sp_write_from_EX & sig_call_from_EX
 
@@ -456,6 +643,7 @@ BEGIN
         )
         PORT MAP(
             clk => clk,
+            reset => reset,
             flush => sig_flush_detection_EX_MEM,
             data_in => sig_EX_MEM_inputs,
             data_out => sig_EX_MEM_outputs
@@ -477,6 +665,8 @@ BEGIN
     sig_r_dest_from_MEM <= sig_EX_MEM_outputs(18 DOWNTO 16);
     sig_sp_from_MEM <= sig_EX_MEM_outputs(15 DOWNTO 0);
 
+    sig_data_forward_from_MEM <= sig_alu_out_from_MEM;
+
     MEMORY_STAGE : ENTITY work.memory_stage
         PORT MAP(
             clk => clk,
@@ -493,6 +683,8 @@ BEGIN
             flags => sig_flags_to_MEM,
             sp => sig_sp_from_MEM,
             sp_write_back => sig_sp_from_WB,
+
+            reset => reset,
 
             data_out => sig_memory_out_from_MEM,
             memory_address_out => sig_memory_address_from_MEM
@@ -512,20 +704,21 @@ BEGIN
         )
         PORT MAP(
             clk => clk,
+            reset => reset,
             flush => sig_flush_detection_MEM_WB,
             data_in => sig_MEM_WB_inputs,
             data_out => sig_MEM_WB_outputs
         );
 
-    sig_ret_or_rti_from_WB <= sig_EX_MEM_outputs(55);
-    sig_reg_write_from_WB <= sig_EX_MEM_outputs(54);
-    sig_mem_to_reg_from_WB <= sig_EX_MEM_outputs(53);
-    sig_rti_from_WB <= sig_EX_MEM_outputs(52);
-    sig_int_from_WB <= sig_EX_MEM_outputs(51);
-    sig_memory_out_from_WB <= sig_EX_MEM_outputs(50 DOWNTO 35);
-    sig_alu_out_from_WB <= sig_EX_MEM_outputs(34 DOWNTO 19);
-    sig_r_dest_from_WB <= sig_EX_MEM_outputs(18 DOWNTO 16);
-    sig_sp_from_WB <= sig_EX_MEM_outputs(15 DOWNTO 0);
+    sig_ret_or_rti_from_WB <= sig_MEM_WB_outputs(55);
+    sig_reg_write_from_WB <= sig_MEM_WB_outputs(54);
+    sig_mem_to_reg_from_WB <= sig_MEM_WB_outputs(53);
+    sig_rti_from_WB <= sig_MEM_WB_outputs(52);
+    sig_int_from_WB <= sig_MEM_WB_outputs(51);
+    sig_memory_out_from_WB <= sig_MEM_WB_outputs(50 DOWNTO 35);
+    sig_alu_out_from_WB <= sig_MEM_WB_outputs(34 DOWNTO 19);
+    sig_r_dest_from_WB <= sig_MEM_WB_outputs(18 DOWNTO 16);
+    sig_sp_from_WB <= sig_MEM_WB_outputs(15 DOWNTO 0);
 
     WRITE_BACK_STAGE : ENTITY work.write_back_stage
         PORT MAP(
@@ -534,4 +727,14 @@ BEGIN
             data2 => sig_alu_out_from_WB,
             writeback_stage_out => sig_write_data_from_WB
         );
+
+    PROCESS (sig_out_from_EX, sig_alu_out_from_EX)
+    BEGIN
+        IF (sig_out_from_EX = '1') THEN
+            output_port <= sig_alu_out_from_EX;
+        ELSE
+            output_port <= (OTHERS => 'Z');
+        END IF;
+    END PROCESS;
+
 END Behavioral;

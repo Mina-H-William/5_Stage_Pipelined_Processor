@@ -10,6 +10,7 @@ USE ieee.std_logic_unsigned.ALL;
 
 ENTITY forward_unit IS
     PORT (
+        reset : IN STD_LOGIC; -- Reset signal (active high)
         rsrc1_execute : IN STD_LOGIC_VECTOR (2 DOWNTO 0); -- Source 1 execute
         rsrc2_execute : IN STD_LOGIC_VECTOR (2 DOWNTO 0); -- Source 2 execute
         rdest_mem : IN STD_LOGIC_VECTOR (2 DOWNTO 0); -- Destination memory
@@ -23,7 +24,7 @@ END forward_unit;
 
 ARCHITECTURE behavior OF forward_unit IS
 BEGIN
-    PROCESS (rsrc1_execute, rsrc2_execute, rdest_mem, rdest_wb, reg_write_signal_mem, reg_write_signal_wb)
+    PROCESS (reset, rsrc1_execute, rsrc2_execute, rdest_mem, rdest_wb, reg_write_signal_mem, reg_write_signal_wb)
     BEGIN
 
         forward1_signal <= "00";

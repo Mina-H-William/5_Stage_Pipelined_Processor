@@ -21,7 +21,7 @@ BEGIN
     PROCESS (clk, reset)
     BEGIN
         IF reset = '1' THEN
-            register_value <= X"0FFF";
+            register_value <= X"0000";
         ELSIF rising_edge(clk) THEN
             -- Update the register value on the clock edge if enabled
             IF stack_exception = '1' THEN

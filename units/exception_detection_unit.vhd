@@ -7,7 +7,8 @@ ENTITY exception_detection_unit IS
         stack_pointer_address : IN STD_LOGIC_VECTOR (15 DOWNTO 0); -- Stack pointer address (16-bit)
         memory_address : IN STD_LOGIC_VECTOR (15 DOWNTO 0); -- Memory address to write (16-bit)
         empty_stack_exception : OUT STD_LOGIC; -- Output for Empty Stack Exception
-        invalid_memory_exception : OUT STD_LOGIC -- Output for Invalid Memory Address Exception
+        invalid_memory_exception : OUT STD_LOGIC; -- Output for Invalid Memory Address Exception
+        write_enable : IN STD_LOGIC -- Write enable signal for stack pointer
     );
 END exception_detection_unit;
 
@@ -25,7 +26,7 @@ BEGIN
         END IF;
 
         -- Check for Invalid Memory Address Exception
-        IF memory_address > MAX_VALID_ADDRESS THEN
+        IF memory_address > MAX_VALID_ADDRESS AND write_enable = '1' THEN
             invalid_memory_exception <= '1';
         ELSE
             invalid_memory_exception <= '0';

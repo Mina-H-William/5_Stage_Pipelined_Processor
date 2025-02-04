@@ -42,6 +42,19 @@ INT index
 RTI
 ```
 
+# Processor Design Overview
+
+## Single Cycle Processor 🖥️
+
+![Single Cycle Processor](path/to/your/single_cycle_image.png)
+[View High-Quality Image 📸](https://miro.com/app/board/uXjVL8SgfTs=/)
+
+## Pipelined Processor 🔄
+
+![Pipelined Processor](path/to/your/pipelined_image.png)
+[View High-Quality Image 📸](https://miro.com/app/board/uXjVL0KtqO8=/)
+
+
 ## Contributors
 <!-- readme: collaborators -start -->
 <table>
@@ -76,6 +89,3 @@ RTI
     </td></tr>
 </table>
 <!-- readme: collaborators -end -->
-
-
-### For the design and more info about the architectural desicions we took, check <a href="https://bit.ly/3JFTedJ">this</a> along with the attached PDFs (Design Folder).
